@@ -56,7 +56,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_MAC80211_TRACING \
 	CONFIG_PACKAGE_ATH_DEBUG \
 	CONFIG_PACKAGE_ATH_DFS \
-	CONFIG_PACKAGE_ATH10K_THERMAL \
 	CONFIG_PACKAGE_B43_DEBUG \
 	CONFIG_PACKAGE_B43_PIO \
 	CONFIG_PACKAGE_B43_PHY_G \
@@ -130,14 +129,6 @@ define KernelPackage/mac80211/config
 	config PACKAGE_MAC80211_MESH
 		bool "Enable 802.11s mesh support"
 		default y
-
-	config PACKAGE_ATH10K_THERMAL
-		bool "Enable thermal sensors (mac80211 and supported drivers)"
-		select THERMAL
-		default y
-		help
-		  Select this to enable thermal sensors allowing
-		  to check temperature.
 
   endif
 endef
@@ -1515,11 +1506,6 @@ ifdef CONFIG_PACKAGE_MAC80211_TRACING
 	WIL6210_TRACING \
 	ATH5K_TRACER \
 	IWLWIFI_DEVICE_TRACING
-endif
-
-ifdef CONFIG_PACKAGE_ATH10K_THERMAL
-  config-y += \
-	ATH10K_THERMAL
 endif
 
 config-$(call config_package,lib80211) += LIB80211 LIB80211_CRYPT_WEP LIB80211_CRYPT_CCMP LIB80211_CRYPT_TKIP

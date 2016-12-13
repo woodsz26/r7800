@@ -23,7 +23,7 @@ DEFAULT_PACKAGES += \
 	kmod-ath10k wpad-mini \
 	uboot-envtools \
 	block-mount e2fsprogs openssl-util luci luci-app-minidlna \
-	luci-app-upnp luci-app-transmission transmission-daemon-openssl \
-	kmod-usb-storage kmod-fs-ext4 minidlna miniupnpd nano htop
+	luci-app-transmission transmission-daemon-openssl \
+	kmod-usb-storage kmod-fs-ext4 minidlna nano htop
 
 $(eval $(call BuildTarget))

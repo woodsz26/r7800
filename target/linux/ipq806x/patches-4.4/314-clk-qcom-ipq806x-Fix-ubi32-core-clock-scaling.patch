@@ -1,0 +1,47 @@
+From ec363de7c2298ffac74e89d0ff2e4d6d49feb4ac Mon Sep 17 00:00:00 2001
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Fri, 7 Aug 2015 11:26:42 -0700
+Subject: clk: qcom: ipq806x: Fix ubi32 core clock scaling
+
+The ubi32 core clocks were getting turned off during late init,
+but the ubi32 core clocks need to stay on because the processor
+is running out of the bootloader. Mark the clocks as
+IGNORE_UNUSED so that late init doesn't turn these clocks off.
+This makes the bank switching during clk_set_rate() work
+properly.
+
+The next problem is the safe_parent op is incorrectly
+indicating PLL18 instead of PLL8 as the safe parent to use during
+clock scaling. Fix this by using the software index into the parent
+array instead of the hardware index for PLL8 (which happens to
+map to the PLL18 software index).
+
+Change-Id: I83d55c8945575f309d58e74830a92dc502a524a5
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index e418232..8f47870 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -2701,7 +2701,7 @@ static struct clk_dyn_rcg ubi32_core1_src_clk = {
+ 			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
+ 			.num_parents = 5,
+ 			.ops = &clk_dyn_rcg_ops,
+-			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
++			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE | CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
+@@ -2754,7 +2754,7 @@ static struct clk_dyn_rcg ubi32_core2_src_clk = {
+ 			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
+ 			.num_parents = 5,
+ 			.ops = &clk_dyn_rcg_ops,
+-			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
++			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE | CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
+

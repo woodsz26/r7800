@@ -24,6 +24,7 @@ DEFAULT_PACKAGES += \
 	uboot-envtools \
 	block-mount e2fsprogs openssl-util luci luci-app-minidlna \
 	luci-app-transmission transmission-daemon-openssl \
-	kmod-usb-storage kmod-fs-ext4 minidlna nano htop
+	kmod-usb-storage kmod-fs-ext4 minidlna nano htop \
+	aria2 luci-app-aria samba36-server luci-app-samba
 
 $(eval $(call BuildTarget))

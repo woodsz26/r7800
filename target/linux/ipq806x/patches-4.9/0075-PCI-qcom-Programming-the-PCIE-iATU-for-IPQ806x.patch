@@ -42,9 +42,9 @@ index 859073d..611c265 100644
 +#define PCIE20_PLR_IATU_UTAR			0x91c
 +
 +#define MSM_PCIE_DEV_CFG_ADDR		0x01000000
- #define PCIE20_CAP_LINK_CAPABILITIES		(PCIE20_CAP + 0xC)
- #define PCIE20_CAP_LINK_1			(PCIE20_CAP + 0x14)
- #define PCIE_CAP_LINK1_VAL			0x2fd7f
+
+ #define PERST_DELAY_US				1000
+ 
 @@ -210,6 +233,57 @@ static int qcom_pcie_establish_link(struct qcom_pcie *pcie)
  	return dw_pcie_wait_for_link(&pcie->pp);
  }

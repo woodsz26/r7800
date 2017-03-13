@@ -85,7 +85,7 @@ index fd9142f..a9d5846 100644
 @@ -252,7 +285,6 @@ static int qcom_pcie_init_v0(struct qcom_pcie *pcie)
  {
  	struct qcom_pcie_resources_v0 *res = &pcie->res.v0;
- 	struct device *dev = pcie->dev;
+ 	struct device *dev = pcie->pp.dev;
 -	u32 val;
  	int ret;
  

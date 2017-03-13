@@ -51,7 +51,7 @@ index 859073d..611c265 100644
  
 +static void qcom_pcie_prog_viewport_cfg0(struct qcom_pcie *pcie, u32 busdev)
 +{
-+	struct pcie_port *pp;
++	struct pcie_port *pp = &pcie->pp;
 +
 +	/*
 +	 * program and enable address translation region 0 (device config
@@ -74,7 +74,7 @@ index 859073d..611c265 100644
 +
 +static void qcom_pcie_prog_viewport_mem2_outbound(struct qcom_pcie *pcie)
 +{
-+	struct pcie_port *pp;
++	struct pcie_port *pp = &pcie->pp;
 +
 +	/*
 +	 * program and enable address translation region 2 (device resource

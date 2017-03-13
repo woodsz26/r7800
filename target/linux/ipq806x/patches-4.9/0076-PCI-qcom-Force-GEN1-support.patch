@@ -36,8 +36,8 @@ index d5b5b2c..4d79a81 100644
  	usleep_range(1000, 1500);
 +	if (pcie->force_gen1) {
 +		writel_relaxed((readl_relaxed(
-+			pcie->dbi + PCIE20_LNK_CONTROL2_LINK_STATUS2) | 1),
-+			pcie->dbi + PCIE20_LNK_CONTROL2_LINK_STATUS2);
++			pcie->pp.dbi_base + PCIE20_LNK_CONTROL2_LINK_STATUS2) | 1),
++			pcie->pp.dbi_base + PCIE20_LNK_CONTROL2_LINK_STATUS2);
 +	}
  
  	qcom_pcie_prog_viewport_cfg0(pcie, MSM_PCIE_DEV_CFG_ADDR);

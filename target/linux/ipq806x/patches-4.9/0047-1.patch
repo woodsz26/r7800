@@ -1,0 +1,26 @@
+From 608828a109b5151a67143aae8e50c4047545c323 Mon Sep 17 00:00:00 2001
+From: dissent1 <be.dissent+github@gmail.com>
+Date: Tue, 14 Mar 2017 21:59:59 +0300
+Subject: [PATCH] Update cpufreq-dt.c
+
+---
+ drivers/cpufreq/cpufreq-dt.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 4d3ec92..d9f322c 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -221,7 +221,11 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	}
+ 
+ 	if (fallback) {
+-		cpumask_setall(policy->cpus);
++		struct cpufreq_dt_platform_data *pd = cpufreq_get_driver_data();
++
++		if (!pd || !pd->independent_clocks)
++			cpumask_setall(policy->cpus);
++
+ 
+ 		/*
+ 		 * OPP tables are initialized only for policy->cpu, do it for

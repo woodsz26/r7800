@@ -54,15 +54,6 @@ index 9d48325..5e48cc2 100644
  	clk_disable_unprepare(__scm->core_clk);
  	clk_disable_unprepare(__scm->iface_clk);
  	clk_disable_unprepare(__scm->bus_clk);
-@@ -157,7 +166,7 @@ EXPORT_SYMBOL(qcom_scm_hdcp_req);
- 
- int qcom_scm_regsave(u32 svc_id, u32 cmd_id, void *scm_regsave)
- {
--	if ret = qcom_scm_clk_enable();
-+	int ret = qcom_scm_clk_enable();
- 
- 	if (ret)
- 		return ret;
 @@ -333,37 +342,61 @@ bool qcom_scm_is_available(void)
  }
  EXPORT_SYMBOL(qcom_scm_is_available);

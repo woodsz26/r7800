@@ -1,0 +1,124 @@
+From dbd363778b0f477f1e51376cce93985eba53cce1 Mon Sep 17 00:00:00 2001
+From: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Date: Tue, 24 Jan 2017 18:06:30 +0530
+Subject: ARM: qcom: ipq807x: Add SCM call support for watchdog in IPQ807x
+
+Signed-off-by: Ajay Kishore <akisho@codeaurora.org>
+(cherry picked from commit 022dc68b945b2d5175c09221fae0e2a61148dbef)
+
+Change-Id: I2c8d2afad1595980605441fd81a5296f8ddc645c
+Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+---
+ drivers/firmware/qcom_scm-32.c | 25 ++++++++++++++++++++++++-
+ drivers/firmware/qcom_scm-64.c |  5 +++++
+ drivers/firmware/qcom_scm.c    | 12 ++++++++++++
+ drivers/firmware/qcom_scm.h    |  1 +
+ include/linux/qcom_scm.h       |  5 +++++
+ 5 files changed, 47 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
+index c6aeedb..fa77c99 100644
+--- a/drivers/firmware/qcom_scm-32.c
++++ b/drivers/firmware/qcom_scm-32.c
+@@ -1,4 +1,4 @@
+-/* Copyright (c) 2010,2015, The Linux Foundation. All rights reserved.
++/* Copyright (c) 2010,2015-2016, The Linux Foundation. All rights reserved.
+  * Copyright (C) 2015 Linaro Ltd.
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -455,6 +455,29 @@ int __qcom_scm_hdcp_req(struct device *dev, struct qcom_scm_hdcp_req *req,
+ 		req, req_cnt * sizeof(*req), resp, sizeof(*resp));
+ }
+ 
++int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id)
++{
++	long ret;
++	struct {
++		unsigned addr;
++		int len;
++	} cmd_buf;
++	/* Area for context dump in secure mode */
++	void *scm_regsave;
++
++	sec_regsave = (void *)__get_free_page(GFP_KERNEL);
++	if (scm_regsave) {
++		cmd_buf.addr = virt_to_phys(scm_regsave);
++		cmd_buf.len = PAGE_SIZE;
++		ret = qcom_scm_call(dev, svc_id, cmd_id, &cmd_buf,
++				sizeof(cmd_buf), NULL, 0);
++	} else {
++		ret = -ENOMEM;
++	}
++
++	return ret;
++}
++
+ void __qcom_scm_init(void)
+ {
+ }
+diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
+index c9d6ae7..99d76a3 100644
+--- a/drivers/firmware/qcom_scm-64.c
++++ b/drivers/firmware/qcom_scm-64.c
+@@ -358,3 +358,8 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
+ 
+ 	return ret ? : res.a1;
+ }
++
++int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id)
++{
++	return -ENOTSUPP;
++}
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index d95c702..dfdb0b7 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -155,6 +155,18 @@ int qcom_scm_hdcp_req(struct qcom_scm_hdcp_req *req, u32 req_cnt, u32 *resp)
+ }
+ EXPORT_SYMBOL(qcom_scm_hdcp_req);
+ 
++int qcom_scm_regsave(u32 svc_id, u32 cmd_id)
++{
++	if ret = qcom_scm_clk_enable();
++
++	if (ret)
++		return ret;
++	ret = __qcom_scm_regsave(__scm->dev, svc_id, cmd_id);
++	qcom_scm_clk_disable();
++	return ret;
++}
++EXPORT_SYMBOL(qcom_scm_regsave);
++
+ /**
+  * qcom_scm_pas_supported() - Check if the peripheral authentication service is
+  *			      available for the given peripherial
+diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+index 3584b00..2dc11e7 100644
+--- a/drivers/firmware/qcom_scm.h
++++ b/drivers/firmware/qcom_scm.h
+@@ -37,6 +37,7 @@ extern int __qcom_scm_is_call_available(struct device *dev, u32 svc_id,
+ #define QCOM_SCM_CMD_HDCP		0x01
+ extern int __qcom_scm_hdcp_req(struct device *dev,
+ 		struct qcom_scm_hdcp_req *req, u32 req_cnt, u32 *resp);
++extern int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id);
+ 
+ extern void __qcom_scm_init(void);
+ 
+diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+index cc32ab8..bdcca27 100644
+--- a/include/linux/qcom_scm.h
++++ b/include/linux/qcom_scm.h
+@@ -37,6 +37,11 @@ extern int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
+ extern int qcom_scm_pas_auth_and_reset(u32 peripheral);
+ extern int qcom_scm_pas_shutdown(u32 peripheral);
+ 
++#define SCM_SVC_UTIL		0x3
++#define SCM_CMD_SET_REGSAVE 	0x2
++
++extern int qcom_scm_regsave(u32 svc_id, u32 cmd_id);
++
+ #define QCOM_SCM_CPU_PWR_DOWN_L2_ON	0x0
+ #define QCOM_SCM_CPU_PWR_DOWN_L2_OFF	0x1
+ 
+-- 
+cgit v1.1

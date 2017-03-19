@@ -23,7 +23,7 @@ diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
 index 34a9cc1e9..cdc30a0 100644
 --- a/drivers/firmware/qcom_scm-32.c
 +++ b/drivers/firmware/qcom_scm-32.c
-@@ -581,3 +581,23 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
+@@ -581,3 +581,21 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
  
  	return ret ? : le32_to_cpu(out);
  }

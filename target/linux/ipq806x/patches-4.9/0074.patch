@@ -90,10 +90,9 @@ index 1bc00b0..42bc4c8 100644
 --- a/drivers/firmware/qcom_scm.h
 +++ b/drivers/firmware/qcom_scm.h
 @@ -74,6 +74,14 @@ extern int qcom_scm_sdi(u32 svc_id, u32 cmd_id);
- extern int __qcom_scm_tzsched(struct device *, u32 svc_id, u32 cmd_id,
- 			const void *req, size_t req_size, void *resp,
- 			size_t resp_size);
-+
+ extern int  __qcom_scm_pas_shutdown(struct device *dev, u32 peripheral);
+ extern int  __qcom_scm_pas_mss_reset(struct device *dev, bool reset);
+ 
 +#define SCM_IO_READ	1
 +#define SCM_IO_WRITE	2
 +#define SCM_SVC_IO_ACCESS	0x5

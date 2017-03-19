@@ -1,0 +1,34 @@
+From 069980a6a35d4abc2883a6720c24bc613ec3c51e Mon Sep 17 00:00:00 2001
+From: Senthilkumar N L <snlakshm@codeaurora.org>
+Date: Fri, 30 Dec 2016 14:51:51 +0530
+Subject: firmware: qcom: scm: fix input arg type for dload call
+
+cmd_buf address is passed to __qcom_scm_dload function
+
+Signed-off-by: Senthilkumar N L <snlakshm@codeaurora.org>
+(cherry picked from commit 9549483ba4fc95f0b62df7998089e5f0b9cb4727)
+
+Conflicts:
+	drivers/firmware/qcom_scm-32.c
+
+Change-Id: I89b385b1c7ec29553b75133fddabf3e2a5b3df10
+Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+---
+ drivers/firmware/qcom_scm-32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
+index 0976f65..34a9cc1e9 100644
+--- a/drivers/firmware/qcom_scm-32.c
++++ b/drivers/firmware/qcom_scm-32.c
+@@ -587,7 +587,7 @@ int __qcom_scm_dload(struct device *dev, u32 svc_id, u32 cmd_id, void *cmd_buf)
+ 	long ret;
+ 
+ 	if (cmd_buf)
+-		ret = qcom_scm_call(dev, svc_id, cmd_id, &cmd_buf,
++		ret = qcom_scm_call(dev, svc_id, cmd_id, cmd_buf,
+ 				sizeof(cmd_buf), NULL, 0);
+ 	else
+ 		ret = qcom_scm_call(dev, svc_id, cmd_id, NULL, 0, NULL, 0);
+-- 
+cgit v1.1

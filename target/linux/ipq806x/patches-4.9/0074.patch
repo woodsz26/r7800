@@ -89,7 +89,7 @@ diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
 index 1bc00b0..42bc4c8 100644
 --- a/drivers/firmware/qcom_scm.h
 +++ b/drivers/firmware/qcom_scm.h
-@@ -74,6 +74,14 @@ extern int qcom_scm_sdi(u32 svc_id, u32 cmd_id);
+@@ -74,6 +74,13 @@ extern int qcom_scm_sdi(u32 svc_id, u32 cmd_id);
  extern int  __qcom_scm_pas_shutdown(struct device *dev, u32 peripheral);
  extern int  __qcom_scm_pas_mss_reset(struct device *dev, bool reset);
  

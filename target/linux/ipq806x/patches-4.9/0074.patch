@@ -68,7 +68,7 @@ diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
 index 5e48cc2..778be74 100644
 --- a/drivers/firmware/qcom_scm.c
 +++ b/drivers/firmware/qcom_scm.c
-@@ -429,3 +429,52 @@ static int __init qcom_scm_init(void)
+@@ -429,3 +429,16 @@ static int __init qcom_scm_init(void)
  	return platform_driver_register(&qcom_scm_driver);
  }
  subsys_initcall(qcom_scm_init);

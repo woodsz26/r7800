@@ -109,9 +109,9 @@ index 146264a..4e19d0c 100644
 --- a/drivers/pinctrl/qcom/pinctrl-msm.c
 +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
 @@ -29,7 +29,8 @@
- #include <linux/spinlock.h>
  #include <linux/reboot.h>
  #include <linux/pm.h>
+ #include <linux/log2.h>
 -
 +#include <linux/qcom_scm.h>
 +#include <linux/io.h>
@@ -172,11 +172,10 @@ diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
 index 255ab2e..3cd61c7 100644
 --- a/include/linux/qcom_scm.h
 +++ b/include/linux/qcom_scm.h
-@@ -49,5 +49,6 @@ extern u32 qcom_scm_get_version(void);
- extern int qcom_scm_tzsched(u32 svc_id, u32 cmdid, const void *req,
- 				size_t req_size, void *resp, size_t resp_size);
+@@ -49,4 +49,6 @@ #define QCOM_SCM_VERSION(major, minor) (((major) << 16) | ((minor) & 0xFF))
  
--
+ extern u32 qcom_scm_get_version(void);
+ 
 +extern s32 qcom_scm_pinmux_read(u32 arg1);
 +extern s32 qcom_scm_pinmux_write(u32 arg1, u32 arg2);
  #endif

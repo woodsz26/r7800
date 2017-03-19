@@ -1,1 +1,150 @@
+From 8ccd91cb2e14c0276c067c31e612b2adc23d7b21 Mon Sep 17 00:00:00 2001
+From: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Date: Wed, 25 Jan 2017 16:44:36 +0530
+Subject: ipq40xx: Modification in the scm call wrapper function
 
+The 4K page allocation by kernel is now happens in
+watchdog driver. Some part of 4k page is used for writing
+the crashdump data to flash.
+
+Signed-off-by: Ajay Kishore <akisho@codeaurora.org>
+(cherry picked from commit 625d490ae6970719cf7115b7dec6a5d7f420447f)
+
+Change-Id: Ib73307e82e0975048b134851c7830f4b78860893
+Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+---
+ drivers/firmware/qcom_scm-32.c |  8 +++-----
+ drivers/firmware/qcom_scm-64.c |  3 ++-
+ drivers/firmware/qcom_scm.c    |  5 +++--
+ drivers/firmware/qcom_scm.h    |  1 +
+ drivers/watchdog/qcom-wdt.c    | 16 +++++++++++++---
+ include/linux/qcom_scm.h       |  2 +-
+ 6 files changed, 23 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
+index fa77c99..82e4bd9 100644
+--- a/drivers/firmware/qcom_scm-32.c
++++ b/drivers/firmware/qcom_scm-32.c
+@@ -455,24 +455,22 @@ int __qcom_scm_hdcp_req(struct device *dev, struct qcom_scm_hdcp_req *req,
+ 		req, req_cnt * sizeof(*req), resp, sizeof(*resp));
+ }
+ 
+-int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id)
++int __qcom_scm_regsave(struct device *dev,
++				u32 svc_id, u32 cmd_id, void *scm_regsave)
+ {
+ 	long ret;
+ 	struct {
+ 		unsigned addr;
+ 		int len;
+ 	} cmd_buf;
+-	/* Area for context dump in secure mode */
+-	void *scm_regsave;
+ 
+-	sec_regsave = (void *)__get_free_page(GFP_KERNEL);
+ 	if (scm_regsave) {
+ 		cmd_buf.addr = virt_to_phys(scm_regsave);
+ 		cmd_buf.len = PAGE_SIZE;
+ 		ret = qcom_scm_call(dev, svc_id, cmd_id, &cmd_buf,
+ 				sizeof(cmd_buf), NULL, 0);
+ 	} else {
+-		ret = -ENOMEM;
++		ret = -EINVAL;
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
+index 99d76a3..746c869 100644
+--- a/drivers/firmware/qcom_scm-64.c
++++ b/drivers/firmware/qcom_scm-64.c
+@@ -359,7 +359,8 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
+ 	return ret ? : res.a1;
+ }
+ 
+-int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id)
++int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id,
++			void *scm_regsave)
+ {
+ 	return -ENOTSUPP;
+ }
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index dfdb0b7..4daadf4 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -155,15 +155,16 @@ int qcom_scm_hdcp_req(struct qcom_scm_hdcp_req *req, u32 req_cnt, u32 *resp)
+ }
+ EXPORT_SYMBOL(qcom_scm_hdcp_req);
+ 
+-int qcom_scm_regsave(u32 svc_id, u32 cmd_id)
++int qcom_scm_regsave(u32 svc_id, u32 cmd_id, void *scm_regsave)
+ {
+ 	if ret = qcom_scm_clk_enable();
+ 
+ 	if (ret)
+ 		return ret;
+-	ret = __qcom_scm_regsave(__scm->dev, svc_id, cmd_id);
++	ret = __qcom_scm_regsave(__scm->dev, svc_id, cmd_id, scm_regsave);
+ 	qcom_scm_clk_disable();
+ 	return ret;
++
+ }
+ EXPORT_SYMBOL(qcom_scm_regsave);
+ 
+diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+index 2dc11e7..9bab304 100644
+--- a/drivers/firmware/qcom_scm.h
++++ b/drivers/firmware/qcom_scm.h
+@@ -57,6 +57,7 @@ extern int  __qcom_scm_pas_auth_and_reset(struct device *dev, u32 peripheral);
+ extern int  __qcom_scm_pas_shutdown(struct device *dev, u32 peripheral);
+ extern int  __qcom_scm_pas_mss_reset(struct device *dev, bool reset);
+ 
++extern int __qcom_scm_regsave(u32 svc_id, u32 cmd_id, void *);
+ /* common error codes */
+ #define QCOM_SCM_V2_EBUSY	-12
+ #define QCOM_SCM_ENOMEM		-5
+diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+index 9fe67f7..02c801b 100644
+--- a/drivers/watchdog/qcom-wdt.c
++++ b/drivers/watchdog/qcom-wdt.c
+@@ -82,13 +82,23 @@ static struct notifier_block panic_blk = {
+ 
+ static long qcom_wdt_configure_bark_dump(void *arg)
+ {
++	void *scm_regsave;
++
+ 	long ret = -ENOMEM;
+ 
+-	ret = qcom_scm_regsave(SCM_SVC_UTIL, SCM_CMD_SET_REGSAVE);
+-	if (ret)
++	scm_regsave = (void *)__get_free_page(GFP_KERNEL);
++	if (!scm_regsave)
++		return -ENOMEM;
++
++	ret = qcom_scm_regsave(SCM_SVC_UTIL, SCM_CMD_SET_REGSAVE,
++						scm_regsave);
++	if (ret) {
+ 		pr_err("Setting register save address failed.\n"
+ 			"Registers won't be dumped on a dog bite\n");
+-	return ret;
++		return ret;
++	}
++
++	return 0;
+ }
+ 
+ static int qcom_wdt_start_secure(struct watchdog_device *wdd)
+diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+index bdcca27..532d1f6 100644
+--- a/include/linux/qcom_scm.h
++++ b/include/linux/qcom_scm.h
+@@ -40,7 +40,7 @@ extern int qcom_scm_pas_shutdown(u32 peripheral);
+ #define SCM_SVC_UTIL		0x3
+ #define SCM_CMD_SET_REGSAVE 	0x2
+ 
+-extern int qcom_scm_regsave(u32 svc_id, u32 cmd_id);
++extern int qcom_scm_regsave(u32 svc_id, u32 cmd_id, void *);
+ 
+ #define QCOM_SCM_CPU_PWR_DOWN_L2_ON	0x0
+ #define QCOM_SCM_CPU_PWR_DOWN_L2_OFF	0x1
+-- 
+cgit v1.1

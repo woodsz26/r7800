@@ -1,0 +1,333 @@
+From 2e8df60c88423f7bcaecfcbf3eb25ea2e415715a Mon Sep 17 00:00:00 2001
+From: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Date: Wed, 25 Jan 2017 16:56:07 +0530
+Subject: ipq40xx: Enable restart reason driver
+
+Enabled the reboot handler to write the restart reason command
+to distinguish between normal and abnormal reboots.
+
+Signed-off-by: Ajay Kishore <akisho@codeaurora.org>
+(cherry picked from commit 55afaa392672e76e94316b88fdee61f0b0450c57)
+
+Change-Id: I6d1f349c676d5f566aa99c927f8fbac21e067134
+Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+---
+ .../bindings/soc/qcom/qca,scm_restart_reason.txt   | 15 +++++++
+ arch/arm/boot/dts/qcom-ipq4019.dtsi                |  4 ++
+ drivers/firmware/Makefile                          |  1 +
+ drivers/firmware/qca_scm_restart_reason.c          | 22 +++++-----
+ drivers/firmware/qcom_scm-32.c                     | 37 ++++++++++++++++
+ drivers/firmware/qcom_scm-64.c                     | 17 ++++++++
+ drivers/firmware/qcom_scm.c                        | 49 ++++++++++++++++++++++
+ drivers/firmware/qcom_scm.h                        | 24 +++++++++--
+ include/linux/qcom_scm.h                           | 13 +++---
+ 9 files changed, 159 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qca,scm_restart_reason.txt
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qca,scm_restart_reason.txt b/Documentation/devicetree/bindings/soc/qcom/qca,scm_restart_reason.txt
+new file mode 100644
+index 0000000..b40e6e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qca,scm_restart_reason.txt
+@@ -0,0 +1,15 @@
++QCA SCM_RESTART_REASON
++
++scm restart reason driver controls the collection of crashdump.
++During panic/assert the notifiers registered in this driver will be kicked in
++and the magic cookie is set, the crashdumps are collected in apps bootloader.
++
++Required properties:
++ - compatible: must contain "qca,scm_restart_reason" for IPQ40xx
++
++
++Example for ipq40xx:
++
++	qca,scm_restart_reason {
++		compatible = "qca,scm_restart_reason";
++	};
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index e5d93db..98acc49 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -396,6 +396,10 @@
+ 			reg = <0x4ab000 0x4>;
+ 		};
+ 
++		qca,scm_restart_reason {
++			compatible = "qca,scm_restart_reason";
++		};
++
+ 		sdhc_1: sdhci@7824000 {
+ 			compatible = "qcom,sdhci-msm";
+ 			reg = <0x7824900 0x11c>, <0x7824000 0x800>;
+diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+index 48dd417..fdb6c18 100644
+--- a/drivers/firmware/Makefile
++++ b/drivers/firmware/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_RASPBERRYPI_FIRMWARE) += raspberrypi.o
+ obj-$(CONFIG_QCOM_SCM)		+= qcom_scm.o
+ obj-$(CONFIG_QCOM_SCM_64)	+= qcom_scm-64.o
+ obj-$(CONFIG_QCOM_SCM_32)	+= qcom_scm-32.o
++obj-$(CONFIG_QCOM_RESTART_REASON) += qca_scm_restart_reason.o
+ CFLAGS_qcom_scm-32.o :=$(call as-instr,.arch armv7-a\n.arch_extension sec,-DREQUIRES_SEC=1) -march=armv7-a
+ 
+ obj-y				+= broadcom/
+diff --git a/drivers/firmware/qca_scm_restart_reason.c b/drivers/firmware/qca_scm_restart_reason.c
+index 32c064e..1c5d706 100644
+--- a/drivers/firmware/qca_scm_restart_reason.c
++++ b/drivers/firmware/qca_scm_restart_reason.c
+@@ -23,7 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/notifier.h>
+ #include <linux/reboot.h>
+-#include <soc/qcom/scm.h>
++#include "qcom_scm.h"
+ 
+ #define SET_MAGIC	0x1
+ #define CLEAR_MAGIC	0x0
+@@ -37,24 +37,22 @@ static void scm_restart_dload_mode_enable(void)
+ {
+ 	if (!dload_dis) {
+ 		unsigned int magic_cookie = SET_MAGIC;
+-		scm_call(SCM_SVC_BOOT, SCM_CMD_TZ_FORCE_DLOAD_ID, &magic_cookie,
+-			sizeof(magic_cookie), NULL, 0);
++		qcom_scm_dload(QCOM_SCM_SVC_BOOT, SCM_CMD_TZ_FORCE_DLOAD_ID,
++				&magic_cookie);
+ 	}
+ }
+ 
+ static void scm_restart_dload_mode_disable(void)
+ {
+ 	unsigned int magic_cookie = CLEAR_MAGIC;
+-	scm_call(SCM_SVC_BOOT, SCM_CMD_TZ_FORCE_DLOAD_ID, &magic_cookie,
+-		sizeof(magic_cookie), NULL, 0);
+-}
++
++	qcom_scm_dload(QCOM_SCM_SVC_BOOT, SCM_CMD_TZ_FORCE_DLOAD_ID,
++			&magic_cookie);
++};
+ 
+ static void scm_restart_sdi_disable(void)
+ {
+-	unsigned int clear_info[] = {
+-		1 /* Disable wdog debug */, 0 /* SDI enable*/, };
+-	scm_call(SCM_SVC_BOOT, SCM_CMD_TZ_CONFIG_HW_FOR_RAM_DUMP_ID,
+-		&clear_info, sizeof(clear_info), NULL, 0);
++	qcom_scm_sdi(QCOM_SCM_SVC_BOOT, SCM_CMD_TZ_CONFIG_HW_FOR_RAM_DUMP_ID);
+ }
+ 
+ static int scm_restart_panic(struct notifier_block *this,
+@@ -101,8 +99,8 @@ static int scm_restart_reason_probe(struct platform_device *pdev)
+ 		dload_dis_sec = 0;
+ 
+ 	if (dload_dis_sec) {
+-		scm_call(SCM_SVC_BOOT, SCM_CMD_TZ_SET_DLOAD_FOR_SECURE_BOOT,
+-							NULL, 0, NULL, 0);
++		qcom_scm_dload(QCOM_SCM_SVC_BOOT,
++			SCM_CMD_TZ_SET_DLOAD_FOR_SECURE_BOOT, NULL);
+ 	}
+ 
+ 	/* Ensure Disable before enabling the dload and sdi bits
+diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
+index 82e4bd9..0976f65 100644
+--- a/drivers/firmware/qcom_scm-32.c
++++ b/drivers/firmware/qcom_scm-32.c
+@@ -581,3 +581,40 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
+ 
+ 	return ret ? : le32_to_cpu(out);
+ }
++
++int __qcom_scm_dload(struct device *dev, u32 svc_id, u32 cmd_id, void *cmd_buf)
++{
++	long ret;
++
++	if (cmd_buf)
++		ret = qcom_scm_call(dev, svc_id, cmd_id, &cmd_buf,
++				sizeof(cmd_buf), NULL, 0);
++	else
++		ret = qcom_scm_call(dev, svc_id, cmd_id, NULL, 0, NULL, 0);
++
++	return ret;
++}
++
++int __qcom_scm_sdi(struct device *dev, u32 svc_id, u32 cmd_id)
++{
++	long ret;
++	unsigned int clear_info[] = {
++		1 /* Disable wdog debug */, 0 /* SDI enable*/, };
++
++	ret = qcom_scm_call(dev, svc_id, cmd_id, &clear_info,
++				sizeof(clear_info), NULL, 0);
++
++	return ret;
++}
++
++int __qcom_scm_tzsched(struct device *dev,
++			u32 svc_id, u32 cmd_id, const void *req,
++			size_t req_size, void *resp, size_t resp_size)
++{
++	int ret;
++
++	ret = qcom_scm_call(dev, svc_id, cmd_id, req,
++				req_size, resp, resp_size);
++
++	return ret;
++}
+diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
+index 746c869..cbb1cc2 100644
+--- a/drivers/firmware/qcom_scm-64.c
++++ b/drivers/firmware/qcom_scm-64.c
+@@ -364,3 +364,20 @@ int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id,
+ {
+ 	return -ENOTSUPP;
+ }
++
++int __qcom_scm_dload(struct device *dev, u32 svc_id, u32 cmd_id, void *cmd_buf)
++{
++	return -ENOTSUPP;
++}
++
++int __qcom_scm_sdi(struct device *dev, u32 svc_id, u32 cmd_id)
++{
++	return -ENOTSUPP;
++}
++
++int __qcom_scm_tzsched(struct device *dev, u32 svc_id, u32 cmd_id,
++			const void *req, size_t req_size, void *resp,
++			size_t resp_size)
++{
++	return -ENOTSUPP;
++}
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 4daadf4..9d48325 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -429,3 +429,52 @@ static int __init qcom_scm_init(void)
+ 	return platform_driver_register(&qcom_scm_driver);
+ }
+ subsys_initcall(qcom_scm_init);
++
++int qcom_scm_dload(u32 svc_id, u32 cmd_id, void *cmd_buf)
++{
++	int ret;
++
++	ret = qcom_scm_clk_enable();
++	if (ret)
++		return ret;
++
++	ret = __qcom_scm_dload(__scm->dev, svc_id, cmd_id, cmd_buf);
++
++	qcom_scm_clk_disable();
++
++	return ret;
++
++}
++EXPORT_SYMBOL(qcom_scm_dload);
++
++int qcom_scm_sdi(u32 svc_id, u32 cmd_id)
++{
++	int ret;
++
++	ret = qcom_scm_clk_enable();
++	if (ret)
++		return ret;
++	ret = __qcom_scm_sdi(__scm->dev, svc_id, cmd_id);
++
++	qcom_scm_clk_disable();
++
++	return ret;
++}
++EXPORT_SYMBOL(qcom_scm_sdi);
++
++int qcom_scm_tzsched(u32 svc_id, u32 cmdid, const void *req,
++			size_t req_size, void *resp, size_t resp_size)
++{	int ret;
++
++	ret = qcom_scm_clk_enable();
++	if (ret)
++		return ret;
++
++	ret = __qcom_scm_tzsched(__scm->dev, svc_id, cmdid, req, req_size,
++				resp, resp_size);
++
++	qcom_scm_clk_disable();
++
++	return ret;
++}
++EXPORT_SYMBOL(qcom_scm_tzsched);
+diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+index 9bab304..1bc00b0 100644
+--- a/drivers/firmware/qcom_scm.h
++++ b/drivers/firmware/qcom_scm.h
+@@ -35,9 +35,6 @@ extern int __qcom_scm_is_call_available(struct device *dev, u32 svc_id,
+ 
+ #define QCOM_SCM_SVC_HDCP		0x11
+ #define QCOM_SCM_CMD_HDCP		0x01
+-extern int __qcom_scm_hdcp_req(struct device *dev,
+-		struct qcom_scm_hdcp_req *req, u32 req_cnt, u32 *resp);
+-extern int __qcom_scm_regsave(struct device *dev, u32 svc_id, u32 cmd_id);
+ 
+ extern void __qcom_scm_init(void);
+ 
+@@ -57,7 +54,26 @@ extern int  __qcom_scm_pas_auth_and_reset(struct device *dev, u32 peripheral);
+ extern int  __qcom_scm_pas_shutdown(struct device *dev, u32 peripheral);
+ extern int  __qcom_scm_pas_mss_reset(struct device *dev, bool reset);
+ 
+-extern int __qcom_scm_regsave(u32 svc_id, u32 cmd_id, void *);
++struct qcom_scm_hdcp_req {
++	u32 addr;
++	u32 val;
++};
++
++extern int __qcom_scm_hdcp_req(struct device *dev,
++		struct qcom_scm_hdcp_req *req, u32 req_cnt, u32 *resp);
++
++extern int __qcom_scm_regsave(struct device *, u32 svc_id, u32 cmd_id, void *);
++
++extern int __qcom_scm_dload(struct device *, u32 svc_id, u32 cmd_id,
++				void *cmd_buf);
++extern int qcom_scm_dload(u32 svc_id, u32 cmd_id, void *cmd_buf);
++
++extern int __qcom_scm_sdi(struct device *, u32 svc_id, u32 cmd_id);
++extern int qcom_scm_sdi(u32 svc_id, u32 cmd_id);
++
++extern int __qcom_scm_tzsched(struct device *, u32 svc_id, u32 cmd_id,
++			const void *req, size_t req_size, void *resp,
++			size_t resp_size);
+ /* common error codes */
+ #define QCOM_SCM_V2_EBUSY	-12
+ #define QCOM_SCM_ENOMEM		-5
+diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+index 532d1f6..255ab2e 100644
+--- a/include/linux/qcom_scm.h
++++ b/include/linux/qcom_scm.h
+@@ -18,16 +18,9 @@ extern int qcom_scm_set_warm_boot_addr(void *entry, const cpumask_t *cpus);
+ 
+ #define QCOM_SCM_HDCP_MAX_REQ_CNT	5
+ 
+-struct qcom_scm_hdcp_req {
+-	u32 addr;
+-	u32 val;
+-};
+-
+ extern bool qcom_scm_is_available(void);
+ 
+ extern bool qcom_scm_hdcp_available(void);
+-extern int qcom_scm_hdcp_req(struct qcom_scm_hdcp_req *req, u32 req_cnt,
+-		u32 *resp);
+ 
+ extern bool qcom_scm_pas_supported(u32 peripheral);
+ extern int qcom_scm_pas_init_image(u32 peripheral, const void *metadata,
+@@ -51,4 +44,10 @@ extern void qcom_scm_cpu_power_down(u32 flags);
+ 
+ extern u32 qcom_scm_get_version(void);
+ 
++#define SCM_SVC_TZSCHEDULER	0xFC
++
++extern int qcom_scm_tzsched(u32 svc_id, u32 cmdid, const void *req,
++				size_t req_size, void *resp, size_t resp_size);
++
++
+ #endif
+-- 
+cgit v1.1

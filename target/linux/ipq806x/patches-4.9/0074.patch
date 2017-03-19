@@ -68,10 +68,10 @@ diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
 index 5e48cc2..778be74 100644
 --- a/drivers/firmware/qcom_scm.c
 +++ b/drivers/firmware/qcom_scm.c
-@@ -505,3 +505,16 @@ int qcom_scm_tzsched(u32 svc_id, u32 cmdid, const void *req,
- 	return ret;
+@@ -429,3 +429,52 @@ static int __init qcom_scm_init(void)
+ 	return platform_driver_register(&qcom_scm_driver);
  }
- EXPORT_SYMBOL(qcom_scm_tzsched);
+ subsys_initcall(qcom_scm_init);
 +
 +int qcom_scm_pinmux_read(u32 arg1)
 +{

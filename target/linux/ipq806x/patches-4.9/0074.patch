@@ -17,13 +17,13 @@ Documentation/dmaengine/client.txt:
 Change-Id: I5a3234c7abe62d50495e27b6616d62fc98be70e5
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/dma/qcom_adm.c | 14 +++++++++-----
+ drivers/dma/qcom/qcom_adm.c | 14 +++++++++-----
  1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/qcom_adm.c b/drivers/dma/qcom_adm.c
+diff --git a/drivers/dma/qcom/qcom_adm.c b/drivers/dma/qcom/qcom_adm.c
 index 087f89f..f9c11a6 100644
---- a/drivers/dma/qcom_adm.c
-+++ b/drivers/dma/qcom_adm.c
+--- a/drivers/dma/qcom/qcom_adm.c
++++ b/drivers/dma/qcom/qcom_adm.c
 @@ -379,13 +379,13 @@ static struct dma_async_tx_descriptor *adm_prep_slave_sg(struct dma_chan *chan,
  		if (blk_size < 0) {
  			dev_err(adev->dev, "invalid burst value: %d\n",

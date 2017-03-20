@@ -1,0 +1,69 @@
+From 43fb83a2286881514e87fed2a77f060721d0672f Mon Sep 17 00:00:00 2001
+From: Abhishek Sahu <absahu@codeaurora.org>
+Date: Thu, 20 Oct 2016 14:32:46 +0530
+Subject: dmaengine: qcom: adm_dma: return NULL instead of errno
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+DMA driver should return NULL instead of errno according to
+API Documentation since calling function does only NULL check
+for this API.
+
+Documentation/dmaengine/client.txt:
+“A non-NULL return of this transfer API represents a
+"descriptor" for the given transaction.”
+
+Change-Id: I5a3234c7abe62d50495e27b6616d62fc98be70e5
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/dma/qcom/qcom_adm.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/dma/qcom/qcom_adm.c b/drivers/dma/qcom/qcom_adm.c
+index 087f89f..f9c11a6 100644
+--- a/drivers/dma/qcom/qcom_adm.c
++++ b/drivers/dma/qcom/qcom_adm.c
+@@ -379,13 +379,13 @@ static struct dma_async_tx_descriptor *adm_prep_slave_sg(struct dma_chan *chan,
+ 		if (blk_size < 0) {
+ 			dev_err(adev->dev, "invalid burst value: %d\n",
+ 				burst);
+-			return ERR_PTR(-EINVAL);
++			return NULL;
+ 		}
+ 
+ 		crci = achan->slave.slave_id & 0xf;
+ 		if (!crci || achan->slave.slave_id > 0x1f) {
+ 			dev_err(adev->dev, "invalid crci value\n");
+-			return ERR_PTR(-EINVAL);
++			return NULL;
+ 		}
+ 	}
+ 
+@@ -403,8 +403,10 @@ static struct dma_async_tx_descriptor *adm_prep_slave_sg(struct dma_chan *chan,
+ 	}
+ 
+ 	async_desc = kzalloc(sizeof(*async_desc), GFP_NOWAIT);
+-	if (!async_desc)
+-		return ERR_PTR(-ENOMEM);
++	if (!async_desc) {
++		dev_err(adev->dev, "failed to allocate desc memory\n");
++		return NULL;
++	}
+ 
+ 	if (crci)
+ 		async_desc->mux = achan->slave.slave_id & ADM_CRCI_MUX_SEL ?
+@@ -419,8 +421,10 @@ static struct dma_async_tx_descriptor *adm_prep_slave_sg(struct dma_chan *chan,
+ 				&async_desc->dma_addr, GFP_NOWAIT);
+ 
+ 	if (!async_desc->cpl) {
++		dev_err(adev->dev, "failed to allocate cpl memory %d\n",
++				async_desc->dma_len);
+ 		kfree(async_desc);
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 	}
+ 
+ 	async_desc->adev = adev;
+-- 
+cgit v1.1

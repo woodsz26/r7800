@@ -48,7 +48,7 @@
 
 #define THRESHOLD_ADDR		0x3624
 /* THRESHOLD_ADDR bitmasks */
-#define THRESHOLD_MAX_CODE		0xff
+#define THRESHOLD_MAX_CODE		0x20000
 #define THRESHOLD_MIN_CODE		0
 #define THRESHOLD_MAX_LIMIT_SHIFT	24
 #define THRESHOLD_MIN_LIMIT_SHIFT	16
@@ -102,7 +102,6 @@
 
 #define TSENS_8064_SEQ_SENSORS	5
 #define TSENS_8064_S4_S5_OFFSET	40
-#define TSENS_FACTOR		1000
 
 /* Trips: from very hot to very cold */
 enum tsens_trip_type {
@@ -122,26 +121,16 @@ u32 tsens_8064_slope[] = {
 /* Temperature on y axis and ADC-code on x-axis */
 static inline int code_to_degC(u32 adc_code, const struct tsens_sensor *s)
 {
-	int degcbeforefactor, degc;
+	int degc;
 
-	degcbeforefactor = (adc_code * s->slope) + s->offset;
-
-	if (degcbeforefactor == 0)
-		degc = degcbeforefactor;
-	else if (degcbeforefactor > 0)
-		degc = (degcbeforefactor + TSENS_FACTOR/2)
-			/ TSENS_FACTOR;
-	else
-		degc = (degcbeforefactor - TSENS_FACTOR/2)
-			/ TSENS_FACTOR;
+	degc = (adc_code * s->slope) + s->offset;
 
 	return degc;
 }
 
 static int degC_to_code(int degC, const struct tsens_sensor *s)
 {
-	int code = ((degC * TSENS_FACTOR - s->offset) + (s->slope/2))
-			/ s->slope;
+	int code = (degC - s->offset) / s->slope;
 
 	if (code > THRESHOLD_MAX_CODE)
 		code = THRESHOLD_MAX_CODE;

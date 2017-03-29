@@ -540,7 +540,7 @@
 		};
 
 		qfprom: qfprom@700000 {
-			compatible = "qcom,qfprom", "syscon";
+			compatible = "qcom,qfprom";
 			reg = <0x700000 0x1000>;
 			#address-cells = <1>;
 			#size-cells = <1>;

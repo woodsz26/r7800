@@ -545,10 +545,10 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 			status = "okay";
-			tsens_calib: calib@400 {
+			tsens_calib: calib {
 				reg = <0x400 0x10>;
 			};
-			tsens_backup: backup@410 {
+			tsens_backup: calib_backup {
 				reg = <0x410 0x10>;
 			};
 		};

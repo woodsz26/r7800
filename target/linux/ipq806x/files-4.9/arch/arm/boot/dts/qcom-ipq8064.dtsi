@@ -894,7 +894,7 @@
 
 		tsens: thermal-sensor@900000 {
 			compatible = "qcom,ipq8064-tsens";
-			reg = <0x900000 0x3680>;
+			reg = <0x900000 0x3678>;
 			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
 			nvmem-cell-names = "calib", "calib_backup";
 			interrupts = <0 178 0>;

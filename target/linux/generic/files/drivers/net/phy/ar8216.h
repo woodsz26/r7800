@@ -2,6 +2,7 @@
  * ar8216.h: AR8216 switch driver
  *
  * Copyright (C) 2009 Felix Fietkau <nbd@nbd.name>
+ * Copyright (c) 2017 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -472,6 +473,8 @@ u32
 ar8xxx_read(struct ar8xxx_priv *priv, int reg);
 void
 ar8xxx_write(struct ar8xxx_priv *priv, int reg, u32 val);
+u32
+ar8xxx_rmr(struct ar8xxx_priv *priv, int reg, u32 mask);
 u32
 ar8xxx_rmw(struct ar8xxx_priv *priv, int reg, u32 mask, u32 val);
 

@@ -20,8 +20,8 @@ r7500 |\
 r7500v2 |\
 r7800 |\
 vr2600v)
-	ucidef_add_switch "switch0" \
-		"1:lan" "2:lan" "3:lan" "4:lan" "6@eth1" "5:wan" "0@eth0"
+	 ucidef_set_interface_lan "lan1 lan2 lan3 lan4"
+	 ucidef_set_interface_wan wan
 	;;
 db149)
 	ucidef_set_interface_lan "eth1 eth2 eth3"
@@ -31,8 +31,8 @@ db149)
 ea8500)
 
 	hw_mac_addr=$(mtd_get_mac_ascii devinfo hw_mac_addr)
-	ucidef_add_switch "switch0" \
-		"0@eth0" "1:lan" "2:lan" "3:lan" "4:lan" "5:wan"
+	ucidef_set_interface_lan "lan1 lan2 lan3 lan4"
+	ucidef_set_interface_wan wan
 	ucidef_set_interface_macaddr "lan" "$hw_mac_addr"
 	ucidef_set_interface_macaddr "wan" "$hw_mac_addr"
 	;;
@@ -43,8 +43,8 @@ fritz4040)
 	;;
 nbg6817)
 	hw_mac_addr=$(mtd_get_mac_ascii 0:APPSBLENV ethaddr)
-	ucidef_add_switch "switch0" \
-		"1:lan" "2:lan" "3:lan" "4:lan" "6@eth1" "5:wan" "0@eth0"
+	ucidef_set_interface_lan "lan1 lan2 lan3 lan4"
+	ucidef_set_interface_wan wan
 	ucidef_set_interface_macaddr "lan" "$hw_mac_addr"
 	ucidef_set_interface_macaddr "wan" "$(macaddr_add $hw_mac_addr 1)"
 	;;

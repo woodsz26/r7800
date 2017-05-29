@@ -1,0 +1,55 @@
+From e07eb279884bb2d611e05db454f4a78ba277a6f3 Mon Sep 17 00:00:00 2001
+From: dissent1 <be.dissent+github@gmail.com>
+Date: Mon, 29 May 2017 12:21:09 +0300
+Subject: [PATCH] Add qca8k debug print
+
+---
+ drivers/net/dsa/qca8k.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
+index b3df70d07f..7138fd7fd3 100644
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -938,24 +938,32 @@ qca8k_sw_probe(struct mdio_device *mdiodev)
+ 	struct qca8k_priv *priv;
+ 	u32 id;
+ 
++	pr_warn("Probing QCA8k switch\n");
++
+ 	/* allocate the private data struct so that we can probe the switches
+ 	 * ID register
+ 	 */
+ 	priv = devm_kzalloc(&mdiodev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
++		pr_err("qca8k NOMEM I\n");
+ 		return -ENOMEM;
+ 
+ 	priv->bus = mdiodev->bus;
+ 
+ 	/* read the switches ID register */
+ 	id = qca8k_read(priv, QCA8K_REG_MASK_CTRL);
++	pr_warn("id1 %u\n", id);
+ 	id >>= QCA8K_MASK_CTRL_ID_S;
++	pr_warn("id2 %u\n", id);
+ 	id &= QCA8K_MASK_CTRL_ID_M;
++	pr_warn("id3 %u\n", id);
+ 	if (id != QCA8K_ID_QCA8337)
++		pr_err("No qca8k ar8337 device found\n");
+ 		return -ENODEV;
+ 
+ 	priv->ds = devm_kzalloc(&mdiodev->dev, sizeof(*priv->ds), GFP_KERNEL);
+ 	if (!priv->ds)
++		pr_err("qca8k NOMEM II\n");
+ 		return -ENOMEM;
+ 
+ 	priv->ds->priv = priv;
+@@ -963,6 +971,8 @@ qca8k_sw_probe(struct mdio_device *mdiodev)
+ 	priv->ds->ops = &qca8k_switch_ops;
+ 	mutex_init(&priv->reg_mutex);
+ 	dev_set_drvdata(&mdiodev->dev, priv);
++	
++	pr_warn("Registering QCA8k switch\n");
+ 
+ 	return dsa_register_switch(priv->ds, priv->ds->dev->of_node);
+ }

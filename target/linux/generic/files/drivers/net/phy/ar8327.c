@@ -1185,8 +1185,8 @@ ar8327_sw_get_max_frame_size(struct switch_dev *dev,
 	u32 v;
 	struct ar8xxx_priv *priv = swdev_to_ar8xxx(dev);
 
-	v = ar8xxx_rmr(priv, AR8327_REG_MAX_FRAME_SIZE,
-			AR8327_MAX_FRAME_SIZE_MTU);
+	v = ar8xxx_read(priv, AR8327_REG_MAX_FRAME_SIZE);
+	v &= AR8327_MAX_FRAME_SIZE_MTU;
  
 	val->value.i = v;
 	return 0;

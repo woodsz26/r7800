@@ -302,6 +302,9 @@
 
 #define AR8337_PAD_MAC06_EXCHANGE_EN		BIT(31)
 
+#define AR8327_REG_ROUTE_EG_MODE                0xc80
+#define   AR8327_ROUTE_EG_MODE_S(_i)            ((_i) * 4)
+
 enum ar8327_led_pattern {
 	AR8327_LED_PATTERN_OFF = 0,
 	AR8327_LED_PATTERN_BLINK,

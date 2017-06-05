@@ -225,7 +225,7 @@
 				ports {
 					#address-cells = <1>;
 					#size-cells = <0>;
-					port@0 {
+					sw_cpu_port0: port@0 {
 						reg = <0>;
 						label = "cpu";
 						ethernet = <&gmac1>;
@@ -241,33 +241,38 @@
 						reg = <1>;
 						label = "lan1";
 						phy-handle = <&phy_port1>;
+						cpu = <&sw_cpu_port0>;
 					};
 
 					port@2 {
 						reg = <2>;
 						label = "lan2";
 						phy-handle = <&phy_port2>;
+						cpu = <&sw_cpu_port0>;
 					};
 
 					port@3 {
 						reg = <3>;
 						label = "lan3";
 						phy-handle = <&phy_port3>;
+						cpu = <&sw_cpu_port0>;
 					};
 
 					port@4 {
 						reg = <4>;
 						label = "lan4";
 						phy-handle = <&phy_port4>;
+						cpu = <&sw_cpu_port0>;
 					};
 
 					port@5 {
 						reg = <5>;
 						label = "wan";
 						phy-handle = <&phy_port5>;
+						cpu = <&sw_cpu_port6>;
 					};
 
-					port@6 {
+					sw_cpu_port6: port@6 {
 						reg = <6>;
 						label = "cpu";
 						ethernet = <&gmac2>;

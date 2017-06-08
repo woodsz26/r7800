@@ -19,11 +19,9 @@ Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
  drivers/net/wireless/ath/ath10k/bmi.h | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/bmi.h b/drivers/net/wireless/ath/ath10k/bmi.h
-index 0342073..ff97e0e 100644
 --- a/drivers/net/wireless/ath/ath10k/bmi.h
 +++ b/drivers/net/wireless/ath/ath10k/bmi.h
-@@ -188,8 +188,8 @@ struct bmi_target_info {
+@@ -187,8 +187,8 @@ struct bmi_target_info {
  	u32 type;
  };
  
@@ -34,5 +32,3 @@ index 0342073..ff97e0e 100644
  
  #define BMI_CE_NUM_TO_TARG 0
  #define BMI_CE_NUM_TO_HOST 1
--- 
-cgit v1.1

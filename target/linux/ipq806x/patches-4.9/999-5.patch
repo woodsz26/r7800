@@ -1,0 +1,37 @@
+From 12758a282435c0ab4878ef163e82420a8e250b73 Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Tue, 7 Feb 2017 23:10:13 -0800
+Subject: net: dsa: Do not destroy invalid network devices
+
+[ Upstream commit 382e1eea2d983cd2343482c6a638f497bb44a636 ]
+
+dsa_slave_create() can fail, and dsa_user_port_unapply() will properly check
+for the network device not being NULL before attempting to destroy it. We were
+not setting the slave network device as NULL if dsa_slave_create() failed, so
+we would later on be calling dsa_slave_destroy() on a now free'd and
+unitialized network device, causing crashes in dsa_slave_destroy().
+
+Fixes: 83c0afaec7b7 ("net: dsa: Add new binding implementation")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/dsa/dsa2.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+(limited to 'net/dsa')
+
+diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
+index da38621..0f99297 100644
+--- a/net/dsa/dsa2.c
++++ b/net/dsa/dsa2.c
+@@ -273,7 +273,6 @@ static int dsa_user_port_apply(struct device_node *port, u32 index,
+ 	if (err) {
+ 		dev_warn(ds->dev, "Failed to create slave %d: %d\n",
+ 			 index, err);
+-		ds->ports[index].netdev = NULL;
+ 		return err;
+ 	}
+ 
+-- 
+cgit v1.1

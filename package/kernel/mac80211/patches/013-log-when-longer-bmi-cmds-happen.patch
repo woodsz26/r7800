@@ -12,11 +12,9 @@ Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
  drivers/net/wireless/ath/ath10k/pci.c | 27 +++++++++++++++++++++------
  1 file changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
-index 1e9806f..4f3f513 100644
 --- a/drivers/net/wireless/ath/ath10k/pci.c
 +++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -101,7 +101,8 @@ static int ath10k_pci_init_irq(struct ath10k *ar);
+@@ -101,7 +101,8 @@ static int ath10k_pci_init_irq(struct at
  static int ath10k_pci_deinit_irq(struct ath10k *ar);
  static int ath10k_pci_request_irq(struct ath10k *ar);
  static void ath10k_pci_free_irq(struct ath10k *ar);
@@ -26,7 +24,7 @@ index 1e9806f..4f3f513 100644
  			       struct ath10k_ce_pipe *rx_pipe,
  			       struct bmi_xfer *xfer);
  static int ath10k_pci_qca99x0_chip_reset(struct ath10k *ar);
-@@ -1846,7 +1847,7 @@ int ath10k_pci_hif_exchange_bmi_msg(struct ath10k *ar,
+@@ -1843,7 +1844,7 @@ int ath10k_pci_hif_exchange_bmi_msg(stru
  	if (ret)
  		goto err_resp;
  
@@ -35,7 +33,7 @@ index 1e9806f..4f3f513 100644
  	if (ret) {
  		u32 unused_buffer;
  		unsigned int unused_nbytes;
-@@ -1913,23 +1914,37 @@ static void ath10k_pci_bmi_recv_data(struct ath10k_ce_pipe *ce_state)
+@@ -1910,23 +1911,37 @@ static void ath10k_pci_bmi_recv_data(str
  	xfer->rx_done = true;
  }
  
@@ -77,5 +75,3 @@ index 1e9806f..4f3f513 100644
  }
  
  /*
--- 
-cgit v1.1

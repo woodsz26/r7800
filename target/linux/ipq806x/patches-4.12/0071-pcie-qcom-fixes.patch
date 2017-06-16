@@ -1,5 +1,5 @@
---- a/drivers/pci/host/pcie-qcom.c
-+++ b/drivers/pci/host/pcie-qcom.c
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
 @@ -36,8 +36,50 @@
  
  #include "pcie-designware.h"

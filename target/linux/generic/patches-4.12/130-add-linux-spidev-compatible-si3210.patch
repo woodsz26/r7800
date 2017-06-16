@@ -6,9 +6,9 @@ Signed-off-by: Giuseppe Lippolis <giu.lippolis@gmail.com>
 --- a/drivers/spi/spidev.c
 +++ b/drivers/spi/spidev.c
 @@ -696,6 +696,7 @@ static struct class *spidev_class;
- 	{ .compatible = "rohm,dh2228fv" },
  	{ .compatible = "lineartechnology,ltc2488" },
 	{ .compatible = "ge,achc" },
+ 	{ .compatible = "semtech,sx1301" },
 +	{ .compatible = "siliconlabs,si3210" },
  	{},
  };

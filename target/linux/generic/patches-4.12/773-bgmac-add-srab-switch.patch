@@ -5,9 +5,9 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 --- a/drivers/net/ethernet/broadcom/bgmac.c
 +++ b/drivers/net/ethernet/broadcom/bgmac.c
 @@ -11,6 +11,7 @@
- 
  #include <linux/bcma/bcma.h>
  #include <linux/etherdevice.h>
+ #include <linux/interrupt.h>
 +#include <linux/platform_data/b53.h>
  #include <linux/bcm47xx_nvram.h>
  #include "bgmac.h"

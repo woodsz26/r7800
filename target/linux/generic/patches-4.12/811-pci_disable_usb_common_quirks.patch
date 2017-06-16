@@ -47,12 +47,12 @@
 --- a/drivers/usb/host/pci-quirks.h
 +++ b/drivers/usb/host/pci-quirks.h
 @@ -4,6 +4,9 @@
- #ifdef CONFIG_PCI
+ #ifdef CONFIG_USB_PCI
  void uhci_reset_hc(struct pci_dev *pdev, unsigned long base);
  int uhci_check_and_reset_hc(struct pci_dev *pdev, unsigned long base);
-+#endif  /* CONFIG_PCI */
++#endif  /* CONFIG_USB_PCI */
 +
-+#if defined(CONFIG_PCI) && !defined(CONFIG_PCI_DISABLE_COMMON_QUIRKS)
++#if defined(CONFIG_USB_PCI) && !defined(CONFIG_PCI_DISABLE_COMMON_QUIRKS)
  int usb_amd_find_chipset_info(void);
  int usb_hcd_amd_remote_wakeup_quirk(struct pci_dev *pdev);
  bool usb_amd_hang_symptom_quirk(void);
@@ -77,7 +77,7 @@
  static inline void usb_amd_dev_put(void) {}
  static inline void usb_disable_xhci_ports(struct pci_dev *xhci_pdev) {}
  static inline void sb800_prefetch(struct device *dev, int on) {}
--#endif  /* CONFIG_PCI */
+-#endif  /* CONFIG_USB_PCI */
 +static inline void usb_enable_intel_xhci_ports(struct pci_dev *xhci_pdev) {}
 +#endif
  

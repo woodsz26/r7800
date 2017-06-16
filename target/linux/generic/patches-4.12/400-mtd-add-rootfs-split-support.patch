@@ -26,12 +26,11 @@
  	depends on m
 --- a/drivers/mtd/mtdpart.c
 +++ b/drivers/mtd/mtdpart.c
-@@ -29,10 +29,12 @@
+@@ -29,9 +29,11 @@
  #include <linux/kmod.h>
  #include <linux/mtd/mtd.h>
  #include <linux/mtd/partitions.h>
 +#include <linux/magic.h>
- #include <linux/of.h>
  #include <linux/err.h>
  
  #include "mtdcore.h"

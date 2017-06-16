@@ -24,7 +24,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
 +	if (skb->gro_skip)
 +		goto normal;
 +
- 	if (!(skb->dev->features & NETIF_F_GRO))
+ 	if (netif_elide_gro(skb->dev))
  		goto normal;
  
 @@ -5789,6 +5792,48 @@ static void __netdev_adjacent_dev_unlink

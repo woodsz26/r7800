@@ -1,0 +1,29 @@
+From 7e3146a094ca3c7389b01bc9817abd73bf7736e2 Mon Sep 17 00:00:00 2001
+From: Abhishek Sahu <absahu@codeaurora.org>
+Date: Mon, 11 Jul 2016 18:05:36 +0530
+Subject: qcom: mtd: nand: Fixed config error for BCH
+
+The configuration for BCH is not correct in the current
+driver so this patch fixed the same.
+
+Change-Id: Ia307a80374795e985a069849b226f20f8a00a305
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/mtd/nand/qcom_nandc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+index f28c932..295a271 100644
+--- a/drivers/mtd/nand/qcom_nandc.c
++++ b/drivers/mtd/nand/qcom_nandc.c
+@@ -1934,7 +1934,7 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
+ 				| wide_bus << WIDE_FLASH
+ 				| 1 << DEV0_CFG1_ECC_DISABLE;
+ 
+-	host->ecc_bch_cfg = host->bch_enabled << ECC_CFG_ECC_DISABLE
++	host->ecc_bch_cfg = !host->bch_enabled << ECC_CFG_ECC_DISABLE
+ 				| 0 << ECC_SW_RESET
+ 				| host->cw_data << ECC_NUM_DATA_BYTES
+ 				| 1 << ECC_FORCE_CLK_OPEN
+-- 
+cgit v1.1

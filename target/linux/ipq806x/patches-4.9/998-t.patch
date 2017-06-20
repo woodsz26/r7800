@@ -1,0 +1,35 @@
+From ce2a2e134eb6f023e5dd99f72f74e9ff3a77629f Mon Sep 17 00:00:00 2001
+From: dissent1 <be.dissent+github@gmail.com>
+Date: Tue, 20 Jun 2017 18:55:46 +0300
+Subject: [PATCH] Update cpufreq-dt.c
+
+---
+ drivers/cpufreq/cpufreq-dt.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 36144ea28c..17be52e8cc 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -222,6 +222,8 @@ static int resources_available(void)
+ static int cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	struct cpufreq_frequency_table *freq_table;
++	struct device *dev;
++	struct device_node *np;
+ 	struct opp_table *opp_table = NULL;
+ 	struct private_data *priv;
+ 	struct device *cpu_dev;
+@@ -353,9 +355,11 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->driver_data = priv;
+ 	policy->clk = cpu_clk;
+ 
++	np = of_node_get(dev->of_node);
++	
+ 	if (!of_property_read_u32(np, "cpu_fab_threshold",
+ 					&fab_data.idle_freq)) {
+-		fab_data.clk = clk;
++		fab_data.cpu_clk = cpu_clk;
+ 		fab_scaling_register(&fab_data);
+ 	}
+ 

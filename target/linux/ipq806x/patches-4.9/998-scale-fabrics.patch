@@ -162,7 +162,7 @@ index 0000000..5ebe3db
 +	}
 +
 +	for (i = 0; i < MAX_CLK_COUNT; i++) {
-+		if (!arr_monitor_clk[i].clk) {
++		if (!arr_monitor_clk[i].clu_clk) {
 +			arr_monitor_clk[i].cpu_clk = data->cpu_clk;
 +			arr_monitor_clk[i].idle_freq = data->idle_freq;
 +			ret = 0;
@@ -181,7 +181,7 @@ index 0000000..5ebe3db
 +{
 +	int i;
 +
-+	if (!clk)
++	if (!cpu_clk)
 +		return -1;
 +
 +	for (i = 0; i < MAX_CLK_COUNT; i++) {

@@ -318,8 +318,8 @@ index ab09b23..c71fa5f 100644
 +	struct clk *cpu_clk;
 +	struct device *cpu_dev;
 +
-+	clk = clk_get(cpu_dev, NULL);
-+	fab_scaling_unregister(clk);
++	cpu_clk = clk_get(cpu_dev, NULL);
++	fab_scaling_unregister(cpu_clk);
 +
  	cpufreq_unregister_driver(&dt_cpufreq_driver);
  	return 0;

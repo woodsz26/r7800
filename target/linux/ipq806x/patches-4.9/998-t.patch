@@ -29,7 +29,7 @@ index 36144ea28c..17be52e8cc 100644
  	if (!of_property_read_u32(np, "cpu_fab_threshold",
  					&fab_data.idle_freq)) {
 -		fab_data.clk = clk;
-+		fab_data.clk = cpu_clk;
++		fab_data.cpu_clk = cpu_clk;
  		fab_scaling_register(&fab_data);
  	}
  

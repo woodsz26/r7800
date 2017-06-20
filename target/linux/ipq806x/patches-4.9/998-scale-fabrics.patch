@@ -162,7 +162,7 @@ index 0000000..5ebe3db
 +	}
 +
 +	for (i = 0; i < MAX_CLK_COUNT; i++) {
-+		if (!arr_monitor_clk[i].clu_clk) {
++		if (!arr_monitor_clk[i].cpu_clk) {
 +			arr_monitor_clk[i].cpu_clk = data->cpu_clk;
 +			arr_monitor_clk[i].idle_freq = data->idle_freq;
 +			ret = 0;
@@ -185,7 +185,7 @@ index 0000000..5ebe3db
 +		return -1;
 +
 +	for (i = 0; i < MAX_CLK_COUNT; i++) {
-+		if (arr_monitor_clk[i].cpu_clk == clk) {
++		if (arr_monitor_clk[i].cpu_clk == cpu_clk) {
 +			arr_monitor_clk[i].cpu_clk = 0;
 +			arr_monitor_clk[i].idle_freq = 0;
 +			break;

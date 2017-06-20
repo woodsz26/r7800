@@ -311,12 +311,15 @@ index ab09b23..c71fa5f 100644
  	rcu_read_lock();
  	suspend_opp = dev_pm_opp_get_suspend_opp(cpu_dev);
  	if (suspend_opp)
-@@ -493,6 +503,12 @@ static int dt_cpufreq_probe(struct platform_device *pdev)
+@@ -493,6 +503,15 @@ static int dt_cpufreq_probe(struct platform_device *pdev)
  
  static int dt_cpufreq_remove(struct platform_device *pdev)
  {
 +	struct clk *cpu_clk;
 +	struct device *cpu_dev;
++	struct cpufreq_policy *policy;
++
++	cpu_dev = get_cpu_device(policy->cpu);
 +
 +	cpu_clk = clk_get(cpu_dev, NULL);
 +	fab_scaling_unregister(cpu_clk);
@@ -351,7 +354,7 @@ index 0000000..1dc99f5
 +#define __FAB_SCALING_H
 +
 +struct fab_scaling_info {
-+	struct clk *clk;
++	struct clk *cpu_clk;
 +	unsigned long idle_freq;
 +};
 +

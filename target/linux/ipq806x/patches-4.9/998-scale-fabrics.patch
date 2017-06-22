@@ -384,7 +384,7 @@ index 0000000..1dc99f5
 + * This unregisters the clock source and is no longer monitored.
 + *
 + */
-+int fab_scaling_unregister(struct clk *clk);
++int fab_scaling_unregister(struct clk *cpu_clk);
 +
 +#endif
 -- 

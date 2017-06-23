@@ -104,6 +104,27 @@
 			qcom,ee = <0>;
 		};
 
+		 cryptobam: dma@38004000 {
+			compatible = "qcom,bam-v1.3.0";
+			reg = <0x38004000 0x22000>;
+			interrupts = <0 231 0>;
+			clocks = <&gcc CE5_H_CLK>;
+			clock-names = "bam_clk";
+			#dma-cells = <1>;
+			qcom,ee = <0>;
+                };
+
+		crypto@38000000 {
+			compatible = "qcom,crypto-v5.1";
+			reg = <0x38000000 0x20000>;
+			clocks = <&gcc CE5_H_CLK>,
+				 <&gcc CE5_A_CLK>,
+				 <&gcc CE5_CORE_CLK>;
+			clock-names = "iface", "bus", "core";
+			dmas = <&cryptobam 0>, <&cryptobam 1>;
+			dma-names = "rx", "tx";
+			status = "disabled";
+
 		amba {
 			compatible = "arm,amba-bus";
 			#address-cells = <1>;

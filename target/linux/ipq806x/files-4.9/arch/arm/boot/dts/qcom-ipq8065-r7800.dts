@@ -532,11 +532,11 @@
 			};
 		};
 
-		cryptobam: dma@38004000 {
+		cryptobam: dma@38804000 {
 			status = "okay";
 		};
 
-		crypto@38000000 {
+		crypto@38800000 {
 			status = "okay";
 		};
 

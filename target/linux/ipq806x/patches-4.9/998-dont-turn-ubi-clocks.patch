@@ -29,7 +29,7 @@ diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
 index 7f05dee..a356ea9 100644
 --- a/drivers/clk/qcom/gcc-ipq806x.c
 +++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -2794,7 +2794,8 @@ static struct clk_dyn_rcg ubi32_core1_src_clk = {
+@@ -2764,7 +2764,8 @@ static struct clk_dyn_rcg ubi32_core1_src_clk = {
  			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
  			.num_parents = 5,
  			.ops = &clk_dyn_rcg_ops,
@@ -39,7 +39,7 @@ index 7f05dee..a356ea9 100644
  		},
  	},
  };
-@@ -2848,7 +2849,8 @@ static struct clk_dyn_rcg ubi32_core2_src_clk = {
+@@ -2817,7 +2818,8 @@ static struct clk_dyn_rcg ubi32_core2_src_clk = {
  			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
  			.num_parents = 5,
  			.ops = &clk_dyn_rcg_ops,

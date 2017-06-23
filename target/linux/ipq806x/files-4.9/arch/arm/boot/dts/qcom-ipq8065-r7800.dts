@@ -532,7 +532,7 @@
 			};
 		};
 
-		cryptobam: dma@0x38004000 {
+		cryptobam: dma@38004000 {
 			status = "okay";
 		};
 

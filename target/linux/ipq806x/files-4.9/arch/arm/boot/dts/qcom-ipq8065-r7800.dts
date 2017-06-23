@@ -532,6 +532,14 @@
 			};
 		};
 
+		cryptobam: dma@0x38004000 {
+			status = "okay";
+		};
+
+		crypto@38000000 {
+			status = "okay";
+		};
+
 		/*
 		 * rpm@108000 {
 		 * 	pinctrl-0 = <&i2c4_pins>;

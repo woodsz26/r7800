@@ -12,37 +12,37 @@ new messaging interface and will be used by ipq807x
 Change-Id: I3e046853a4ac7806309c884b73592adbd0e6c633
 Signed-off-by: Sourav Poddar <souravp@codeaurora.org>
 ---
- v1.0/src/Makefile              |   25 +
- v1.0/src/nss_crypto_ctrl.c     | 1282 ++++++++++++++++++++++++++++++++++++++++
- v1.0/src/nss_crypto_ctrl.h     |  269 +++++++++
- v1.0/src/nss_crypto_dbg.h      |  108 ++++
- v1.0/src/nss_crypto_debugfs.c  |  296 ++++++++++
- v1.0/src/nss_crypto_debugfs.h  |   49 ++
- v1.0/src/nss_crypto_dtsi.c     |  486 +++++++++++++++
- v1.0/src/nss_crypto_hlos.h     |   82 +++
- v1.0/src/nss_crypto_hw.h       |  296 ++++++++++
- v1.0/src/nss_crypto_if.c       |  738 +++++++++++++++++++++++
- v1.0/src/nss_crypto_platform.c |  296 ++++++++++
+ drivers/crypto/nss/Makefile              |   25 +
+ drivers/crypto/nss/nss_crypto_ctrl.c     | 1282 ++++++++++++++++++++++++++++++++++++++++
+ drivers/crypto/nss/nss_crypto_ctrl.h     |  269 +++++++++
+ drivers/crypto/nss/nss_crypto_dbg.h      |  108 ++++
+ drivers/crypto/nss/nss_crypto_debugfs.c  |  296 ++++++++++
+ drivers/crypto/nss/nss_crypto_debugfs.h  |   49 ++
+ drivers/crypto/nss/nss_crypto_dtsi.c     |  486 +++++++++++++++
+ drivers/crypto/nss/nss_crypto_hlos.h     |   82 +++
+ drivers/crypto/nss/nss_crypto_hw.h       |  296 ++++++++++
+ drivers/crypto/nss/nss_crypto_if.c       |  738 +++++++++++++++++++++++
+ drivers/crypto/nss/nss_crypto_platform.c |  296 ++++++++++
  11 files changed, 3927 insertions(+)
- create mode 100644 v1.0/src/Makefile
- create mode 100644 v1.0/src/nss_crypto_ctrl.c
- create mode 100644 v1.0/src/nss_crypto_ctrl.h
- create mode 100644 v1.0/src/nss_crypto_dbg.h
- create mode 100644 v1.0/src/nss_crypto_debugfs.c
- create mode 100644 v1.0/src/nss_crypto_debugfs.h
- create mode 100644 v1.0/src/nss_crypto_dtsi.c
- create mode 100644 v1.0/src/nss_crypto_hlos.h
- create mode 100644 v1.0/src/nss_crypto_hw.h
- create mode 100644 v1.0/src/nss_crypto_if.c
- create mode 100644 v1.0/src/nss_crypto_platform.c
+ create mode 100644 drivers/crypto/nss/Makefile
+ create mode 100644 drivers/crypto/nss/nss_crypto_ctrl.c
+ create mode 100644 drivers/crypto/nss/nss_crypto_ctrl.h
+ create mode 100644 drivers/crypto/nss/nss_crypto_dbg.h
+ create mode 100644 drivers/crypto/nss/nss_crypto_debugfs.c
+ create mode 100644 drivers/crypto/nss/nss_crypto_debugfs.h
+ create mode 100644 drivers/crypto/nss/nss_crypto_dtsi.c
+ create mode 100644 drivers/crypto/nss/nss_crypto_hlos.h
+ create mode 100644 drivers/crypto/nss/nss_crypto_hw.h
+ create mode 100644 drivers/crypto/nss/nss_crypto_if.c
+ create mode 100644 drivers/crypto/nss/nss_crypto_platform.c
 
-(limited to 'v1.0/src')
+(limited to 'drivers/crypto/nss')
 
-diff --git a/v1.0/src/Makefile b/v1.0/src/Makefile
+diff --git a/drivers/crypto/nss/Makefile b/drivers/crypto/nss/Makefile
 new file mode 100644
 index 0000000..9a9f89e
 --- /dev/null
-+++ b/v1.0/src/Makefile
++++ b/drivers/crypto/nss/Makefile
 @@ -0,0 +1,25 @@
 +# ###################################################
 +# # Makefile for the NSS driver
@@ -69,11 +69,11 @@ index 0000000..9a9f89e
 +
 +obj ?= .
 +ccflags-y += -I$(obj)/include -I$(obj)/
-diff --git a/v1.0/src/nss_crypto_ctrl.c b/v1.0/src/nss_crypto_ctrl.c
+diff --git a/drivers/crypto/nss/nss_crypto_ctrl.c b/drivers/crypto/nss/nss_crypto_ctrl.c
 new file mode 100644
 index 0000000..10b8684
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_ctrl.c
++++ b/drivers/crypto/nss/nss_crypto_ctrl.c
 @@ -0,0 +1,1282 @@
 +/* Copyright (c) 2013, 2015-2017, The Linux Foundation. All rights reserved.
 + *
@@ -1357,11 +1357,11 @@ index 0000000..10b8684
 +	ctrl->num_eng = 0;
 +	ctrl->num_idxs = 0;
 +}
-diff --git a/v1.0/src/nss_crypto_ctrl.h b/v1.0/src/nss_crypto_ctrl.h
+diff --git a/drivers/crypto/nss/nss_crypto_ctrl.h b/drivers/crypto/nss/nss_crypto_ctrl.h
 new file mode 100644
 index 0000000..c4c7783
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_ctrl.h
++++ b/drivers/crypto/nss/nss_crypto_ctrl.h
 @@ -0,0 +1,269 @@
 +/* Copyright (c) 2013, 2015-2016, The Linux Foundation. All rights reserved.
 + *
@@ -1632,11 +1632,11 @@ index 0000000..c4c7783
 + */
 +bool nss_crypto_chk_idx_isfree(struct nss_crypto_idx_info *idx_info);
 +#endif /* __NSS_CRYPTO_CTRL_H*/
-diff --git a/v1.0/src/nss_crypto_dbg.h b/v1.0/src/nss_crypto_dbg.h
+diff --git a/drivers/crypto/nss/nss_crypto_dbg.h b/drivers/crypto/nss/nss_crypto_dbg.h
 new file mode 100644
 index 0000000..a5ebd60
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_dbg.h
++++ b/drivers/crypto/nss/nss_crypto_dbg.h
 @@ -0,0 +1,108 @@
 +/* Copyright (c) 2013, 2016, The Linux Foundation. All rights reserved.
 + *
@@ -1746,11 +1746,11 @@ index 0000000..a5ebd60
 +#endif /* !CONFIG_NSS_CRYPTO_DBG */
 +
 +#endif /* __NSS_CRYPTO_DBG_H */
-diff --git a/v1.0/src/nss_crypto_debugfs.c b/v1.0/src/nss_crypto_debugfs.c
+diff --git a/drivers/crypto/nss/nss_crypto_debugfs.c b/drivers/crypto/nss/nss_crypto_debugfs.c
 new file mode 100644
 index 0000000..76d2c36
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_debugfs.c
++++ b/drivers/crypto/nss/nss_crypto_debugfs.c
 @@ -0,0 +1,296 @@
 +/* Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
 + *
@@ -2048,11 +2048,11 @@ index 0000000..76d2c36
 +	debugfs_remove_recursive(idx_info->cfg_dentry);
 +	idx_info->cfg_dentry = NULL;
 +}
-diff --git a/v1.0/src/nss_crypto_debugfs.h b/v1.0/src/nss_crypto_debugfs.h
+diff --git a/drivers/crypto/nss/nss_crypto_debugfs.h b/drivers/crypto/nss/nss_crypto_debugfs.h
 new file mode 100644
 index 0000000..265267d
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_debugfs.h
++++ b/drivers/crypto/nss/nss_crypto_debugfs.h
 @@ -0,0 +1,49 @@
 +/* Copyright (c) 2014, The Linux Foundation. All rights reserved.
 + *
@@ -2103,11 +2103,11 @@ index 0000000..265267d
 + */
 +void nss_crypto_debugfs_del_session(struct nss_crypto_ctrl *ctrl, uint32_t idx);
 +
-diff --git a/v1.0/src/nss_crypto_dtsi.c b/v1.0/src/nss_crypto_dtsi.c
+diff --git a/drivers/crypto/nss/nss_crypto_dtsi.c b/drivers/crypto/nss/nss_crypto_dtsi.c
 new file mode 100644
 index 0000000..811a2f6
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_dtsi.c
++++ b/drivers/crypto/nss/nss_crypto_dtsi.c
 @@ -0,0 +1,486 @@
 +/* Copyright (c) 2013, 2015-2017 The Linux Foundation. All rights reserved.
 + *
@@ -2595,11 +2595,11 @@ index 0000000..811a2f6
 +
 +MODULE_LICENSE("Dual BSD/GPL");
 +MODULE_DESCRIPTION("QCA NSS Crypto driver");
-diff --git a/v1.0/src/nss_crypto_hlos.h b/v1.0/src/nss_crypto_hlos.h
+diff --git a/drivers/crypto/nss/nss_crypto_hlos.h b/drivers/crypto/nss/nss_crypto_hlos.h
 new file mode 100644
 index 0000000..df7ff3b
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_hlos.h
++++ b/drivers/crypto/nss/nss_crypto_hlos.h
 @@ -0,0 +1,82 @@
 +/* Copyright (c) 2013, 2016, The Linux Foundation. All rights reserved.
 + *
@@ -2683,11 +2683,11 @@ index 0000000..df7ff3b
 +#endif /* !CONFIG_DYNAMIC_DEBUG */
 +
 +#endif /* __NSS_CRYPTO_HLOS_H */
-diff --git a/v1.0/src/nss_crypto_hw.h b/v1.0/src/nss_crypto_hw.h
+diff --git a/drivers/crypto/nss/nss_crypto_hw.h b/drivers/crypto/nss/nss_crypto_hw.h
 new file mode 100644
 index 0000000..98d8cd7
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_hw.h
++++ b/drivers/crypto/nss/nss_crypto_hw.h
 @@ -0,0 +1,296 @@
 +/* Copyright (c) 2013, 2017, The Linux Foundation. All rights reserved.
 + *
@@ -2985,11 +2985,11 @@ index 0000000..98d8cd7
 +#define nss_crypto_inpipe_to_idx(_in)		((_in) >> 1)
 +
 +#endif /* __NSS_CRYPTO_HW_H*/
-diff --git a/v1.0/src/nss_crypto_if.c b/v1.0/src/nss_crypto_if.c
+diff --git a/drivers/crypto/nss/nss_crypto_if.c b/drivers/crypto/nss/nss_crypto_if.c
 new file mode 100644
 index 0000000..6660499
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_if.c
++++ b/drivers/crypto/nss/nss_crypto_if.c
 @@ -0,0 +1,738 @@
 +/*
 + * Copyright (c) 2013-2017, The Linux Foundation. All rights reserved.
@@ -3729,11 +3729,11 @@ index 0000000..6660499
 +}
 +EXPORT_SYMBOL(nss_crypto_get_hash_addr);
 +
-diff --git a/v1.0/src/nss_crypto_platform.c b/v1.0/src/nss_crypto_platform.c
+diff --git a/drivers/crypto/nss/nss_crypto_platform.c b/drivers/crypto/nss/nss_crypto_platform.c
 new file mode 100644
 index 0000000..27abe46
 --- /dev/null
-+++ b/v1.0/src/nss_crypto_platform.c
++++ b/drivers/crypto/nss/nss_crypto_platform.c
 @@ -0,0 +1,296 @@
 +/*
 + * Copyright (c) 2013,2015-2017, The Linux Foundation. All rights reserved.

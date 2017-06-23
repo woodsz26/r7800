@@ -124,6 +124,7 @@
 			dmas = <&cryptobam 0>, <&cryptobam 1>;
 			dma-names = "rx", "tx";
 			status = "disabled";
+		};
 
 		amba {
 			compatible = "arm,amba-bus";

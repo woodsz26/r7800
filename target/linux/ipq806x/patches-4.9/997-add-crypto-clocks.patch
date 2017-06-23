@@ -275,9 +275,9 @@ index 25ae08a..127e48a 100644
 +	},
 +};
 +
- static int nss_core_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 				 unsigned long parent_rate)
- {
+ static struct clk_regmap *gcc_ipq806x_clks[] = {
+ 	[PLL0] = &pll0.clkr,
+ 	[PLL0_VOTE] = &pll0_vote,
 @@ -2948,6 +3181,7 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
  	[PLL4_VOTE] = &pll4_vote,
  	[PLL8] = &pll8.clkr,
@@ -313,12 +313,12 @@ index 68732c1..d8d3bfa 100644
  #define CE5_CORE_CLK				237
  #define CE3_SLEEP_CLK				238
 @@ -292,5 +292,8 @@
+ #define EBI2_AON_CLK				281
  #define NSSTCM_CLK_SRC				282
  #define NSSTCM_CLK				283
- #define NSS_CORE_CLK				284 /* Virtual */
-+#define CE5_A_CLK_SRC				285
-+#define CE5_H_CLK_SRC				286
-+#define CE5_CORE_CLK_SRC			287
++#define CE5_A_CLK_SRC				284
++#define CE5_H_CLK_SRC				285
++#define CE5_CORE_CLK_SRC			286
  
  #endif
 -- 

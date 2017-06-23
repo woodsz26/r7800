@@ -112,6 +112,8 @@
 			clock-names = "bam_clk";
 			#dma-cells = <1>;
 			qcom,ee = <0>;
+			qcom,controlled-remotely;
+			status = "disabled";
                 };
 
 		crypto@38000000 {

@@ -104,9 +104,9 @@
 			qcom,ee = <0>;
 		};
 
-		 cryptobam: dma@38004000 {
+		 cryptobam: dma@38804000 {
 			compatible = "qcom,bam-v1.3.0";
-			reg = <0x38004000 0x22000>;
+			reg = <0x38804000 0x22000>;
 			interrupts = <0 235 0>;
 			clocks = <&gcc CE5_H_CLK>;
 			clock-names = "bam_clk";
@@ -115,9 +115,9 @@
 			status = "disabled";
                 };
 
-		crypto@38000000 {
+		crypto@38800000 {
 			compatible = "qcom,crypto-v5.1";
-			reg = <0x38000000 0x20000>;
+			reg = <0x38800000 0x20000>;
 			clocks = <&gcc CE5_H_CLK>,
 				 <&gcc CE5_A_CLK>,
 				 <&gcc CE5_CORE_CLK>;

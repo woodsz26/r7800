@@ -1,0 +1,88 @@
+From 89b1197b963acf8dd7abd4c7f7dbb161ada162d0 Mon Sep 17 00:00:00 2001
+From: G Dhivya <gdhivya@codeaurora.org>
+Date: Fri, 2 Jun 2017 20:22:18 +0530
+Subject: arm: dts: ipq40xx: Support Qcrypto driver
+
+Change-Id: Iaea03e9b3a9f11ce9d64bde39a9104db264bad41
+Signed-off-by: G Dhivya <gdhivya@codeaurora.org>
+Signed-off-by: Senthilkumar N L <snlakshm@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-ipq4019.dtsi | 48 +++++++++++++++++++++++++------------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
+
+(limited to 'arch/arm/boot/dts/qcom-ipq4019.dtsi')
+
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index 0d79894d..696e63f 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -165,28 +165,48 @@
+ 		};
+ 
+ 
+-		cryptobam: dma@8e04000 {
+-			compatible = "qcom,bam-v1.7.0";
+-			reg = <0x08e04000 0x20000>;
++		qcom,sps {
++			compatible = "qcom,msm_sps_4k";
++			qcom,device-type = <3>;
++			qcom,pipe-attr-ee;
++		};
++
++		qcom_crypto: qcrypto@8e20000 {
++			compatible = "qcom,qcrypto";
++			reg = <0x8e20000 0x20000>,
++				<0x8e04000 0x20000>;
++			reg-names = "crypto-base","crypto-bam-base";
+ 			interrupts = <GIC_SPI 207 0>;
+-			clocks = <&gcc GCC_CRYPTO_AHB_CLK>;
+-			clock-names = "bam_clk";
+-			#dma-cells = <1>;
+-			qcom,ee = <1>;
+-			qcom,controlled-remotely;
+-			status = "disabled";
++			qcom,bam-pipe-pair = <1>;
++			qcom,ce-hw-instance = <0>;
++			qcom,ce-hw-shared = <1>;
++			qcom,ce-device = <0>;
++			qcom,ce-opp-freq= <125000000>;
++			clocks = <&gcc GCC_CRYPTO_CLK>,
++				<&gcc GCC_CRYPTO_AXI_CLK>,
++				<&gcc GCC_CRYPTO_AHB_CLK>;
++
++			clock-names = "core_clk", "bus_clk", "iface_clk";
++			status = "ok";
+ 		};
+ 
+-		crypto@8e3a000 {
+-			compatible = "qcom,crypto-v5.1";
+-			reg = <0x08e3a000 0x6000>;
+-			clocks = <&gcc GCC_CRYPTO_AHB_CLK>,
+-				 <&gcc GCC_CRYPTO_AXI_CLK>,
+-				 <&gcc GCC_CRYPTO_CLK>;
+-			clock-names = "iface", "bus", "core";
+-			dmas = <&cryptobam 2>, <&cryptobam 3>;
+-			dma-names = "rx", "tx";
+-			status = "disabled";
++		qcom_cedev: qcedev@8e20000 {
++			compatible = "qcom,qcedev";
++			reg = <0x8e20000  0x20000>,
++				<0x8e04000  0x20000>;
++			reg-names = "crypto-base","crypto-bam-base";
++			interrupts = <0 207 0>;
++			qcom,bam-pipe-pair = <1>;
++			qcom,ce-hw-instance = <0>;
++			qcom,ce-hw-shared = <1>;
++			qcom,ce-device = <0>;
++			qcom,ce-opp-freq= <125000000>;
++			clocks = <&gcc GCC_CRYPTO_CLK>,
++				<&gcc GCC_CRYPTO_AXI_CLK>,
++				<&gcc GCC_CRYPTO_AHB_CLK>;
++
++			clock-names = "core_clk", "bus_clk", "iface_clk";
++			status = "ok";
+ 		};
+ 
+                 acc0: clock-controller@b088000 {
+-- 
+cgit v1.1

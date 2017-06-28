@@ -1,0 +1,49 @@
+From 87959323d6ce31e74de090791f2354cec16d9cb0 Mon Sep 17 00:00:00 2001
+From: Arunkumar T <athand@codeaurora.org>
+Date: Tue, 18 Aug 2015 13:01:02 +0530
+Subject: clk: qcom: ipq806x: add support for crypto offload
+
+Signed-off-by: Arunkumar T <athand@codeaurora.org>
+(cherry picked from commit c3e85702b4f7e7dc06d443bbe084b79ec3f96a4e)
+
+Change-Id: Iba0b6ca2f90d47f64a38809f55816217e62976fc
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c               | 5 +++++
+ include/dt-bindings/reset/qcom,gcc-ipq806x.h | 6 ++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 127e48a..7f05dee 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -3434,6 +3434,11 @@ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
+ 	[GMAC_CORE3_RESET] = { 0x3cfc, 0 },
+ 	[GMAC_CORE4_RESET] = { 0x3d1c, 0 },
+ 	[GMAC_AHB_RESET] = { 0x3e24, 0 },
++	[CRYPTO_ENG1_RESET] = { 0x3e00, 0},
++	[CRYPTO_ENG2_RESET] = { 0x3e04, 0},
++	[CRYPTO_ENG3_RESET] = { 0x3e08, 0},
++	[CRYPTO_ENG4_RESET] = { 0x3e0c, 0},
++	[CRYPTO_AHB_RESET] = { 0x3e10, 0},
+ 	[NSS_CH0_RST_RX_CLK_N_RESET] = { 0x3b60, 0 },
+ 	[NSS_CH0_RST_TX_CLK_N_RESET] = { 0x3b60, 1 },
+ 	[NSS_CH0_RST_RX_125M_N_RESET] = { 0x3b60, 2 },
+diff --git a/include/dt-bindings/reset/qcom,gcc-ipq806x.h b/include/dt-bindings/reset/qcom,gcc-ipq806x.h
+index de9c814..7f3d051 100644
+--- a/include/dt-bindings/reset/qcom,gcc-ipq806x.h
++++ b/include/dt-bindings/reset/qcom,gcc-ipq806x.h
+@@ -171,5 +171,11 @@
+ #define NSS_CAL_PRBS_RST_N_RESET			154
+ #define NSS_LCKDT_RST_N_RESET				155
+ #define NSS_SRDS_N_RESET				156
++#define CRYPTO_ENG1_RESET				157
++#define CRYPTO_ENG2_RESET				158
++#define CRYPTO_ENG3_RESET				159
++#define CRYPTO_ENG4_RESET				160
++#define CRYPTO_AHB_RESET				161
++
+ 
+ #endif
+-- 
+cgit v1.1

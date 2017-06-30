@@ -1359,7 +1359,7 @@
 				<&gcc CE5_H_CLK>;
 			clock-names = "core_clk", "bus_clk", "iface_clk";
 			qcom,bam-ee = <0>;
-			status = "disabled";
+			status = "ok";
 		};
 	};
 

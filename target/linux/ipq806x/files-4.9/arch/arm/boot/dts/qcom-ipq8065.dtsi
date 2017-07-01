@@ -82,7 +82,7 @@
 		 	      <0x12800000 0x4000>;
 			reg-names = "bam_mem","core_mem","pipe_mem";
   			interrupts = <0 105 0>;
-			qcom,device-type = <2>;
+			qcom,device-type = <1>;
 		};
 
 		/* Temporary fixed regulator */

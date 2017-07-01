@@ -1323,44 +1323,6 @@
 			qcom,device-type = <2>;
 			qcom,pipe-attr-ee;
 		};
-
-		qcom_crypto: qcrypto@38000000 {
-			compatible = "qcom,qcrypto";
-			reg = <0x38000000 0x20000>,
-				<0x38004000 0x22000>;
-			reg-names = "crypto-base","crypto-bam-base";
-			interrupts = <GIC_SPI 235 0>;
-			qcom,bam-pipe-pair = <0>;
-			qcom,ce-hw-instance = <0>;
-			qcom,ce-hw-shared = <1>;
-			qcom,ce-device = <0>;
-			qcom,ce-opp-freq= <150000000>;
-			clocks = <&gcc CE5_CORE_CLK>,
-				 <&gcc CE5_A_CLK>,
-				 <&gcc CE5_H_CLK>;
-			clock-names = "core_clk", "bus_clk", "iface_clk";
-			qcom,bam-ee = <0>;
-			status = "ok";
-		};
-
-		qcom_cedev: qcedev@38000000 {
-			compatible = "qcom,qcedev";
-			reg = <0x38000000 0x20000>,
-				<0x38004000 0x22000>;
-			reg-names = "crypto-base","crypto-bam-base";
-			interrupts = <0 235 0>;
-			qcom,bam-pipe-pair = <0>;
-			qcom,ce-hw-instance = <0>;
-			qcom,ce-hw-shared = <1>;
-			qcom,ce-device = <0>;
-			qcom,ce-opp-freq= <150000000>;
-			clocks = <&gcc CE5_CORE_CLK>,
-				 <&gcc CE5_A_CLK>,
-				 <&gcc CE5_H_CLK>;
-			clock-names = "core_clk", "bus_clk", "iface_clk";
-			qcom,bam-ee = <0>;
-			status = "ok";
-		};
 	};
 
 	sfpb_mutex: sfpb-mutex {

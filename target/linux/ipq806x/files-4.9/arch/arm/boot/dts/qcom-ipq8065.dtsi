@@ -83,8 +83,8 @@
 			reg-names = "bam_mem","core_mem","pipe_mem";
 			interrupts = <0 105 0>;
 			qcom,device-type = <2>;
-			clocks = <&rpmcc RPM_DAYTONA_FABRIC_CLK>;
-			clock-names = "dfab_clk";
+			clocks = <&rpmcc RPM_DAYTONA_FABRIC_CLK>, <&gcc DMA_BAM_H_CLK>;
+			clock-names = "dfab_clk", "dma_bam_pclk";
 		};
 
 		/* Temporary fixed regulator */

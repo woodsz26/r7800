@@ -1312,17 +1312,6 @@
 
 			status = "disabled";
 		};
-
-		qcom,sps {
-			compatible = "qcom,msm_sps";
-			reg = <0x12244000 0x4000>,
-		  	      <0x12240000 0x1000>,
-		 	      <0x12800000 0x4000>;
-			reg-names = "bam_mem","core_mem","pipe_mem";
-			interrupts = <0 105 0>;
-			qcom,device-type = <2>;
-			qcom,pipe-attr-ee;
-		};
 	};
 
 	sfpb_mutex: sfpb-mutex {

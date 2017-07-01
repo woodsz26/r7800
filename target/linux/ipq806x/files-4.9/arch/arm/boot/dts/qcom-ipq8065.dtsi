@@ -77,8 +77,18 @@
 
 		qcom,sps {
 			compatible = "qcom,msm_sps";
-			qcom,device-type = <3>;
-			qcom,pipe-attr-ee;
+			reg = <0x12244000 0x4000>,
+		  	      <0x12240000 0x1000>,
+		 	      <0x12800000 0x4000>;
+			reg-names = "bam_mem","core_mem","pipe_mem";
+  			interrupts = <0 105 0>;
+			qcom,device-type = <2>;
+			clocks = <&rpmcc RPM_DAYTONA_FABRIC_CLK>, 
+				<&gcc DMA_BAM_H_CLK>,
+				<&gcc PMEM_A_CLK>;
+			clock-names = "dfab_clk", "dma_bam_pclk", "mem_clk";
+			qcom,device-type = <2>;
+
 		};
 
 		/* Temporary fixed regulator */

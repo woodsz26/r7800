@@ -87,7 +87,6 @@
 				<&gcc DMA_BAM_H_CLK>,
 				<&gcc PMEM_A_CLK>;
 			clock-names = "dfab_clk", "dma_bam_pclk", "mem_clk";
-			qcom,device-type = <2>;
 
 		};
 

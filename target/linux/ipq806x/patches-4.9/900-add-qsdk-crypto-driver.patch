@@ -1884,7 +1884,7 @@ index 86bad0b..5dd321d 100644
 +
 +config CRYPTO_DEV_QCOM_MSM_QCE
 +        tristate "Qualcomm Crypto Engine (QCE) module"
-+        select  CRYPTO_DEV_QCE50 if ARCH_APQ8084 || ARCH_MSM8916 || ARCH_MSM8994 || ARCH_MSM8996 || ARCH_MSM8992 || ARCH_MSMTITANIUM || ARCH_QCOM
++        select  CRYPTO_DEV_QCE50 if ARCH_APQ8084 || ARCH_MSM8916 || ARCH_MSM8994 || ARCH_MSM8996 || ARCH_MSM8992 || ARCH_MSMTITANIUM
 +        default n
 +        help
 +          This driver supports Qualcomm Crypto Engine in MSM7x30, MSM8660
@@ -1957,7 +1957,7 @@ index 0000000..993840c
 +ifeq ($(CONFIG_CRYPTO_DEV_QCE50), y)
 +        obj-$(CONFIG_CRYPTO_DEV_QCOM_MSM_QCE) += qce50.o
 +else
-+        obj-$(CONFIG_CRYPTO_DEV_QCOM_MSM_QCE) += qce.o
++        obj-$(CONFIG_CRYPTO_DEV_QCOM_MSM_QCE) += qce40.o
 +endif
 +ifdef CONFIG_COMPAT
 +obj-$(CONFIG_CRYPTO_DEV_QCOM_MSM_QCE) += compat_qcedev.o

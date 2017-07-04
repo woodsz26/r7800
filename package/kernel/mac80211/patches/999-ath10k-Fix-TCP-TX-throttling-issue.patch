@@ -1,0 +1,37 @@
+From 8260e333ecf73cbdc644774b094df4b76a14136f Mon Sep 17 00:00:00 2001
+From: Govind Singh <govinds@codeaurora.org>
+Date: Thu, 9 Mar 2017 14:42:48 +0530
+Subject: ath10k: Fix TCP TX throttling issue
+
+TCP TX throttling logic is changed a little after
+3.19-rc1 kernel, the TCP sending limit will be smaller,
+which will throttle the TCP packets to the host driver.
+The TCP UP LINK throughput will drop heavily. In order to
+fix this issue, need to orphan the socket buffer asap, which
+will call skb's destructor to notify the TCP stack that the
+SKB buffer is unowned. And then the TCP stack will pump more
+packets to host driver.
+
+The TX packets might be dropped for UDP case in the iperf
+testing. So need to be protected by follow control
+
+Change-Id: I1c77313fbdb579e708d4a5a6bcd063c7c34a6d39
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+---
+ drivers/net/wireless/ath/ath10k/mac.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 2e51590..8d49acd 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -3506,6 +3506,7 @@ static int ath10k_mac_tx(struct ath10k *ar,
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+ 	int ret;
+ 
++	skb_orphan(skb);
+ 	/* We should disable CCK RATE due to P2P */
+ 	if (info->flags & IEEE80211_TX_CTL_NO_CCK_RATE)
+ 		ath10k_dbg(ar, ATH10K_DBG_MAC, "IEEE80211_TX_CTL_NO_CCK_RATE\n");
+-- 
+cgit v1.1

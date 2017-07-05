@@ -1,0 +1,71 @@
+From 30ba68bad9f4372858a308eee543fe74711c8c2b Mon Sep 17 00:00:00 2001
+From: Vijay Kumar Pendoti <vpendo@codeaurora.org>
+Date: Tue, 12 Aug 2014 20:35:44 +0530
+Subject: dtc: add integer overflow checks in fdt header
+
+Protect against integer overflows caused by malformed fdt headers.
+
+Signed-off-by: Vijay Kumar Pendoti <vpendo@codeaurora.org>
+Signed-off-by: Matt Wagantall <mattw@codeaurora.org>
+(cherry picked from commit 17653fd2e2dd4f41c12ce61a245156ac65a6d92a)
+
+Change-Id: Id6666b97a80ac2e439bf95c57d81c7be70a3e789
+Signed-off-by: Kathiravan T <kathirav@codeaurora.org>
+---
+ include/linux/libfdt_env.h  |  1 +
+ scripts/dtc/libfdt/fdt.c    | 14 ++++++++++++++
+ scripts/dtc/libfdt/fdt_rw.c |  2 +-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+index 2a663c6..b01d294 100644
+--- a/include/linux/libfdt_env.h
++++ b/include/linux/libfdt_env.h
+@@ -1,6 +1,7 @@
+ #ifndef _LIBFDT_ENV_H
+ #define _LIBFDT_ENV_H
+ 
++#include <linux/kernel.h>
+ #include <linux/string.h>
+ 
+ #include <asm/byteorder.h>
+diff --git a/scripts/dtc/libfdt/fdt.c b/scripts/dtc/libfdt/fdt.c
+index 2ce6a44..d96ed245 100644
+--- a/scripts/dtc/libfdt/fdt.c
++++ b/scripts/dtc/libfdt/fdt.c
+@@ -71,6 +71,20 @@ int fdt_check_header(const void *fdt)
+ 		return -FDT_ERR_BADMAGIC;
+ 	}
+ 
++	if (fdt_off_dt_struct(fdt) > (UINT_MAX - fdt_size_dt_struct(fdt)))
++		return FDT_ERR_BADOFFSET;
++
++	if (fdt_off_dt_strings(fdt) > (UINT_MAX -  fdt_size_dt_strings(fdt)))
++		return FDT_ERR_BADOFFSET;
++
++	if ((fdt_off_dt_struct(fdt) + fdt_size_dt_struct(fdt))
++	    > fdt_totalsize(fdt))
++		return FDT_ERR_BADOFFSET;
++
++	if ((fdt_off_dt_strings(fdt) + fdt_size_dt_strings(fdt))
++	    > fdt_totalsize(fdt))
++		return FDT_ERR_BADOFFSET;
++
+ 	return 0;
+ }
+ 
+diff --git a/scripts/dtc/libfdt/fdt_rw.c b/scripts/dtc/libfdt/fdt_rw.c
+index 70adec6..4463c10 100644
+--- a/scripts/dtc/libfdt/fdt_rw.c
++++ b/scripts/dtc/libfdt/fdt_rw.c
+@@ -394,7 +394,7 @@ int fdt_del_node(void *fdt, int nodeoffset)
+ static void _fdt_packblocks(const char *old, char *new,
+ 			    int mem_rsv_size, int struct_size)
+ {
+-	int mem_rsv_off, struct_off, strings_off;
++	uint32_t mem_rsv_off, struct_off, strings_off;
+ 
+ 	mem_rsv_off = FDT_ALIGN(sizeof(struct fdt_header), 8);
+ 	struct_off = mem_rsv_off + mem_rsv_size;
+-- 
+cgit v1.1

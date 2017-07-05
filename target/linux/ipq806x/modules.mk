@@ -29,3 +29,5 @@ define KernelPackage/usb-phy-qcom-dwc3/description
 endef
 
 $(eval $(call KernelPackage,usb-phy-qcom-dwc3))
+
+

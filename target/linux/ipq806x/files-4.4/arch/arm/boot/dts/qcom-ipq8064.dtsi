@@ -737,11 +737,6 @@
 			reg = <0x02099000 0x1000>, <0x02009000 0x1000>;
 			regulator;
 		};
- 
-		sic_non_secure: sic-non-secure@12100000 {
-			compatible = "syscon";
-			reg = <0x12100000 0x10000>;
-		};
 
 		gsbi2: gsbi@12480000 {
 			compatible = "qcom,gsbi-v1.0.0";
@@ -869,7 +864,7 @@
 		};
 
 		sata_phy: sata-phy@1b400000 {
-			compatible = "qcom,ipq806x-sata-phy";
+			compatible = "qcom,ipq806x-sata-phy", "generic-ahci";
 			reg = <0x1b400000 0x200>;
 
 			clocks = <&gcc SATA_PHY_CFG_CLK>;

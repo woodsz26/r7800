@@ -15,7 +15,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  out:
  	put_page(page);
  }
-- 
+-
 +
 +static int __init mount_ubi_rootfs(void)
 +{

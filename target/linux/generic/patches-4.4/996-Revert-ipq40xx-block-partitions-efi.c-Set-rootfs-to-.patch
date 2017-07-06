@@ -1,0 +1,79 @@
+From d08492c42c2afc2d35fac0bce3096830dbb1e216 Mon Sep 17 00:00:00 2001
+From: Pavel Kubelun <be.dissent@gmail.com>
+Date: Thu, 6 Jul 2017 05:14:13 -0400
+Subject: [PATCH 3/3] Revert "ipq40xx: block/partitions/efi.c: Set "rootfs" to
+ be Root Dev"
+
+This reverts commit a484b333cb4730db93b5012d2c183cd54c8aa16c.
+---
+ block/partitions/efi.c |  9 ---------
+ init/do_mounts.c       | 21 +--------------------
+ 2 files changed, 1 insertion(+), 29 deletions(-)
+
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+index b2dfeb2..26cb624 100644
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -103,7 +103,6 @@
+ #include <linux/slab.h>
+ #include "check.h"
+ #include "efi.h"
+-#include <linux/root_dev.h>
+ 
+ /* This allows a kernel command line option 'gpt' to override
+  * the test for invalid PMBR.  Not __initdata because reloading
+@@ -729,14 +728,6 @@ int efi_partition(struct parsed_partitions *state)
+ 			info->volname[label_count] = c;
+ 			label_count++;
+ 		}
+-
+-		if (ROOT_DEV == 0 && !strcmp(info->volname, "rootfs") &&
+-		    config_enabled(CONFIG_MTD_ROOTFS_ROOT_DEV)) {
+-			ROOT_DEV = MKDEV(MAJOR(state->bdev->bd_dev), i + 1);
+-			pr_notice("GPT: device [%d:%d] (%s) set to be root filesystem\n",
+-				MAJOR(ROOT_DEV), MINOR(ROOT_DEV),
+-				info->volname);
+-		}
+ 		state->parts[i + 1].has_info = true;
+ 	}
+ 	kfree(ptes);
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index c04f45d..2b809a2 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -583,31 +583,12 @@ void __init prepare_namespace(void)
+ 		goto out;
+ 
+ 	/* wait for any asynchronous scanning to complete */
+-	if ((ROOT_DEV == 0) && root_wait && saved_root_name[0]) {
++	if ((ROOT_DEV == 0) && root_wait) {
+ 		printk(KERN_INFO "Waiting for root device %s...\n",
+ 			saved_root_name);
+ 		while (driver_probe_done() != 0 ||
+ 			(ROOT_DEV = name_to_dev_t(saved_root_name)) == 0)
+ 			msleep(100);
+-
+-		async_synchronize_full();
+-	} else if (config_enabled(CONFIG_MTD_ROOTFS_ROOT_DEV) &&
+-			(ROOT_DEV == 0) && root_wait) {
+-		pr_info(KERN_INFO "Waiting for root device ...\n");
+-		/*
+-		 * Though MMC devices get detected before kernel
+-		 * reaches here, GPT partition table parsing happens
+-		 * later. Since we assume the GPT partition "rootfs",
+-		 * as the device to mount the Root FS from, the
+-		 * "root=xxx" command line option might not be
+-		 * present resulting in 'saved_root_name' being NULL.
+-		 * Hence, don't try to do 'name_to_dev_t' on it.
+-		 * Eventually, ROOT_DEV will get updated by the GPT
+-		 * parsing code and we will break out of this loop.
+-		 */
+-		while (driver_probe_done() != 0 || ROOT_DEV == 0)
+-			msleep(100);
+-
+ 		async_synchronize_full();
+ 	}
+ 
+-- 
+2.7.4
+

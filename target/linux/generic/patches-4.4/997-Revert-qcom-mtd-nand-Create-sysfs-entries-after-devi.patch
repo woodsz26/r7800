@@ -1,0 +1,46 @@
+From 765505667b916952fba0e4541b1cd2ff85e52bac Mon Sep 17 00:00:00 2001
+From: Pavel Kubelun <be.dissent@gmail.com>
+Date: Thu, 6 Jul 2017 04:17:05 -0400
+Subject: [PATCH 1/2] Revert "qcom: mtd: nand: Create sysfs entries after
+ device scan"
+
+This reverts commit ec35597110272eb8daccaaa6a1173cff6cbc6504.
+---
+ drivers/mtd/nand/qcom_nandc.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+index 50e8832..d404abc 100644
+--- a/drivers/mtd/nand/qcom_nandc.c
++++ b/drivers/mtd/nand/qcom_nandc.c
+@@ -2878,6 +2878,13 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_setup;
+ 
++	if (nandc->create_sys_boot_layout) {
++		ret = sysfs_create_file(&pdev->dev.kobj,
++					&dev_attr_boot_layout.attr);
++		if (ret)
++			goto err_setup;
++	}
++
+ 	for_each_available_child_of_node(dn, child) {
+ 		if (of_device_is_compatible(child, "qcom,nandcs")) {
+ 			host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
+@@ -2902,13 +2909,6 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+ 		goto err_cs_init;
+ 	}
+ 
+-	if (nandc->create_sys_boot_layout) {
+-		ret = sysfs_create_file(&pdev->dev.kobj,
+-					&dev_attr_boot_layout.attr);
+-		if (ret)
+-			goto err_cs_init;
+-	}
+-
+ 	return 0;
+ 
+ err_cs_init:
+-- 
+2.7.4
+

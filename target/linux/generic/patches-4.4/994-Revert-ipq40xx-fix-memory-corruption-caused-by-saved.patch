@@ -1,0 +1,28 @@
+From 62dca5577f0749c9db172e6f9e8a785136a3e7ac Mon Sep 17 00:00:00 2001
+From: Pavel Kubelun <be.dissent@gmail.com>
+Date: Thu, 6 Jul 2017 05:13:14 -0400
+Subject: [PATCH 1/3] Revert "ipq40xx: fix memory corruption caused by
+ saved_rootfs_name"
+
+This reverts commit 47caaabc910b75db36fe7c4ecfe3c6b3372917f4.
+---
+ block/partitions/efi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+index d36af3e..81db136 100644
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -110,8 +110,7 @@
+  * the partition tables happens after init too.
+  */
+ static int force_gpt;
+-static char saved_rootfs_name[64];
+-
++static char saved_rootfs_name[64] __initdata;
+ static int __init
+ force_gpt_fn(char *str)
+ {
+-- 
+2.7.4
+

@@ -1,7 +1,7 @@
-Index: /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.h
+Index: /include/net/netfilter/nf_conntrack_ecache.h
 ===================================================================
---- /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.h	(revision 32626)
-+++ /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.h	(revision 32627)
+--- /include/net/netfilter/nf_conntrack_ecache.h	(revision 32626)
++++ /include/net/netfilter/nf_conntrack_ecache.h	(revision 32627)
 @@ -94,9 +94,4 @@
  			  u32 portid, int report)
  {
@@ -22,10 +22,10 @@ Index: /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.
 -
  	return nf_conntrack_eventmask_report(1 << event, ct, 0, 0);
  }
-Index: /src/linux/universal/linux-4.9/net/fast-classifier/fast-classifier.c
+Index: /net/fast-classifier/fast-classifier.c
 ===================================================================
---- /src/linux/universal/linux-4.9/net/fast-classifier/fast-classifier.c	(revision 32626)
-+++ /src/linux/universal/linux-4.9/net/fast-classifier/fast-classifier.c	(revision 32627)
+--- /net/fast-classifier/fast-classifier.c	(revision 32626)
++++ /net/fast-classifier/fast-classifier.c	(revision 32627)
 @@ -1384,5 +1384,5 @@
  	if (!test_bit(IPS_FIXED_TIMEOUT_BIT, &ct->status)) {
  		spin_lock_bh(&ct->lock);
@@ -33,10 +33,10 @@ Index: /src/linux/universal/linux-4.9/net/fast-classifier/fast-classifier.c
 +		ct->timeout += sis->delta_jiffies;
  		spin_unlock_bh(&ct->lock);
  	}
-Index: /src/linux/universal/linux-4.9/net/shortcut-fe/sfe_cm.c
+Index: /net/shortcut-fe/sfe_cm.c
 ===================================================================
---- /src/linux/universal/linux-4.9/net/shortcut-fe/sfe_cm.c	(revision 32626)
-+++ /src/linux/universal/linux-4.9/net/shortcut-fe/sfe_cm.c	(revision 32627)
+--- /net/shortcut-fe/sfe_cm.c	(revision 32626)
++++ /net/shortcut-fe/sfe_cm.c	(revision 32627)
 @@ -810,5 +810,5 @@
  	if (!test_bit(IPS_FIXED_TIMEOUT_BIT, &ct->status)) {
  		spin_lock_bh(&ct->lock);

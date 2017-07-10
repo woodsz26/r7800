@@ -1,7 +1,7 @@
-Index: /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.h
+Index: /include/net/netfilter/nf_conntrack_ecache.h
 ===================================================================
---- /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.h	(revision 32626)
-+++ /src/linux/universal/linux-4.9/include/net/netfilter/nf_conntrack_ecache.h	(revision 32627)
+--- /include/net/netfilter/nf_conntrack_ecache.h	(revision 32626)
++++ /include/net/netfilter/nf_conntrack_ecache.h	(revision 32627)
 @@ -94,9 +94,4 @@
  			  u32 portid, int report)
  {

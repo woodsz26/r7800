@@ -15,19 +15,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=shortcut-fe
-PKG_SOURCE_PROTO:=git
-PKG_BRANCH:=master
 PKG_RELEASE:=1
-
-include $(INCLUDE_DIR)/local-development.mk
-ifeq ($(DUMP)$(PKG_VERSION),)
-  PKG_REV:=$(shell git ls-remote $(PKG_SOURCE_URL) $(PKG_BRANCH) | cut -b -7)
-  PKG_VERSION:=g$(PKG_REV)
-endif
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=$(PKG_REV)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -37,7 +25,7 @@ define KernelPackage/shortcut-fe
   SUBMENU:=Network Support
   DEPENDS:=
   TITLE:=Kernel driver for SFE
-  FILES:=$(PKG_BUILD_DIR)/shortcut-fe/shortcut-fe.ko $(PKG_BUILD_DIR)/shortcut-fe/shortcut-fe-ipv6.ko
+  FILES:=$(PKG_BUILD_DIR)/shortcut-fe.ko $(PKG_BUILD_DIR)/shortcut-fe-ipv6.ko
   KCONFIG:=CONFIG_NF_CONNTRACK_EVENTS=y
 endef
 
@@ -51,8 +39,10 @@ define KernelPackage/shortcut-fe-cm
   SUBMENU:=Network Support
   DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe
   TITLE:=Kernel driver for SFE
-  FILES:=$(PKG_BUILD_DIR)/shortcut-fe/shortcut-fe-cm.ko
+  FILES:=$(PKG_BUILD_DIR)/shortcut-fe-cm.ko
+ifneq ($(CONFIG_PACKAGE_kmod-fast-classifier),)
   KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
+endif
 	AUTOLOAD:=$(call AutoProbe,shortcut-fe shortcut-fe-ipv6 shortcut-fe-cm)
 endef
 
@@ -60,24 +50,72 @@ define KernelPackage/shortcut-fe-cm/Description
 Simple connection manager for the Shortcut forwarding engine.
 endef
 
+define KernelPackage/fast-classifier
+  SECTION:=kernel
+  CATEGORY:=Kernel modules
+  SUBMENU:=Network Support
+  DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe
+  TITLE:=Kernel driver for FAST Classifier
+  FILES:=$(PKG_BUILD_DIR)/fast-classifier.ko
+ifneq ($(CONFIG_PACKAGE_kmod-shortcut-fe-cm),)
+  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
+endif
+	AUTOLOAD:=$(call AutoLoad,z,shortcut-fe shortcut-fe-ipv6 fast-classifier)
+  PROVIDES:=$(PKG_NAME)
+endef
+
+define KernelPackage/fast-classifier/description
+FAST Classifier talks to SFE to make decisions about offloading connections
+endef
+
+define Package/fast-classifier-example
+  TITLE:=Example user space program for fast-classifier
+  DEPENDS:=+libnl +libfast-classifier
+endef
+
+define Package/fast-classifier-example/description
+Example user space program that communicates with fast
+classifier kernel module
+endef
+
 EXTRA_CFLAGS+=-DSFE_SUPPORT_IPV6
+
+MAKE_OPTS:= \
+		ARCH="$(LINUX_KARCH)" \
+		CROSS_COMPILE="$(TARGET_CROSS)" $(strip $(SFE_MAKE_OPTS)) \
+		SUBDIRS="$(PKG_BUILD_DIR)" \
+		EXTRA_CFLAGS="$(EXTRA_CFLAGS) -Wno-implicit-function-declaration" \
+		SFE_SUPPORT_IPV6=1
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \
-		CROSS_COMPILE="$(TARGET_CROSS)" \
-		ARCH="$(LINUX_KARCH)" \
-		SUBDIRS="$(PKG_BUILD_DIR)/shortcut-fe" \
-		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
-		SFE_SUPPORT_IPV6=1 \
-		modules
+		$(MAKE_OPTS) \
+		modules	\
+		$(if $(CONFIG_PACKAGE_fast-classifier-example),$(Build/Compile/fast-classifier-example))
 endef
 
-ifneq ($(CONFIG_PACKAGE_kmod-shortcut-fe)$(CONFIG_PACKAGE_kmod-shortcut-fe-cm),)
+define Build/Compile/fast-classifier-example
+	$(TARGET_CC) -o $(PKG_BUILD_DIR)/userspace_fast_classifier \
+		-I $(PKG_BUILD_DIR)/shortcut-fe \
+		-I$(STAGING_DIR)/usr/include/libnl \
+		-I$(STAGING_DIR)/usr/include/libnl3 \
+		-lnl-genl-3 -lnl-3 \
+		$(PKG_BUILD_DIR)/nl_classifier_test.c
+endef
+
+ifneq ($(CONFIG_PACKAGE_kmod-shortcut-fe)$(CONFIG_PACKAGE_kmod-shortcut-fe-cm)$(CONFIG_PACKAGE_kmod-fast-classifier),)
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/shortcut-fe
-	$(CP) -rf $(PKG_BUILD_DIR)/shortcut-fe/sfe.h $(1)/usr/include/shortcut-fe
+	$(CP) -rf $(PKG_BUILD_DIR)/sfe.h $(1)/usr/include/shortcut-fe
+ifneq ($(CONFIG_PACKAGE_kmod-fast-classifier),)
+	$(INSTALL_DIR) $(1)/usr/include
+	$(CP) $(PKG_BUILD_DIR)/fast-classifier.h $(1)/usr/include/
+endif
 endef
 endif
 
 $(eval $(call KernelPackage,shortcut-fe))
 $(eval $(call KernelPackage,shortcut-fe-cm))
+$(eval $(call KernelPackage,fast-classifier))
+$(eval $(call BuildPackage,fast-classifier-example))
+

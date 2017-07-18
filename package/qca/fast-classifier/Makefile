@@ -26,7 +26,8 @@ define KernelPackage/$(PKG_NAME)
   DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe
   TITLE:=Kernel driver for FAST Classifier
   FILES:=$(PKG_BUILD_DIR)/fast-classifier/fast-classifier.ko
-  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
+  KCONFIG:=
+	AUTOLOAD:=$(call AutoLoad,z,shortcut-fe shortcut-fe-ipv6 fast-classifier)
   PROVIDES:=$(PKG_NAME)
 endef
 

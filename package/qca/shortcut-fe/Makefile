@@ -49,11 +49,11 @@ define KernelPackage/shortcut-fe-cm
   SECTION:=kernel
   CATEGORY:=Kernel modules
   SUBMENU:=Network Support
-  DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe +kmod-fast-classifier
+  DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe
   TITLE:=Kernel driver for SFE
   FILES:=$(PKG_BUILD_DIR)/shortcut-fe/shortcut-fe-cm.ko
   KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
-	AUTOLOAD:=$(call AutoProbe,shortcut-fe shortcut-fe-ipv6 shortcut-fe-cm fast-classifier)
+	AUTOLOAD:=$(call AutoProbe,shortcut-fe shortcut-fe-ipv6 shortcut-fe-cm)
 endef
 
 define KernelPackage/shortcut-fe-cm/Description

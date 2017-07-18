@@ -29,6 +29,7 @@
 #include <net/netfilter/nf_conntrack_helper.h>
 #include <net/netfilter/nf_conntrack_zones.h>
 #include <net/netfilter/nf_conntrack_core.h>
+#include <net/netfilter/nf_conntrack_timeout.h>
 #include <linux/netfilter/xt_dscp.h>
 #include <net/genetlink.h>
 #include <linux/spinlock.h>
@@ -483,7 +484,6 @@ static void fast_classifier_send_genl_msg(int msg, struct fast_classifier_tuple 
 	 */
 	total_len = nlmsg_total_size(buf_len);
 	skb = genlmsg_new(total_len, GFP_ATOMIC);
-	
 	if (!skb)
 		return;
 
@@ -706,9 +706,8 @@ fast_classifier_offload_genl_msg(struct sk_buff *skb, struct genl_info *info)
 
 	conn->offload_permit = 1;
 	spin_unlock_bh(&sfe_connections_lock);
-
 	atomic_inc(&offload_msgs);
-	
+
 	DEBUG_TRACE("INFO: calling sfe rule creation!\n");
 	return 0;
 }
@@ -1150,10 +1149,16 @@ static void fast_classifier_update_mark(struct sfe_connection_mark *mark, bool i
  * fast_classifier_conntrack_event()
  *	Callback event invoked when a conntrack connection's state changes.
  */
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 static int fast_classifier_conntrack_event(struct notifier_block *this,
 					   unsigned long events, void *ptr)
+#else
+static int fast_classifier_conntrack_event(unsigned int events, struct nf_ct_event *item)
+#endif
 {
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 	struct nf_ct_event *item = ptr;
+#endif
 	struct sfe_connection_destroy sid;
 	struct nf_conn *ct = item->ct;
 	struct nf_conntrack_tuple orig_tuple;
@@ -1289,9 +1294,15 @@ static int fast_classifier_conntrack_event(struct notifier_block *this,
 /*
  * Netfilter conntrack event system to monitor connection tracking changes
  */
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 static struct notifier_block fast_classifier_conntrack_notifier = {
 	.notifier_call = fast_classifier_conntrack_event,
 };
+#else
+static struct nf_ct_event_notifier fast_classifier_conntrack_notifier = {
+	.fcn = fast_classifier_conntrack_event,
+};
+#endif
 #endif
 
 /*
@@ -1425,6 +1436,38 @@ static void fast_classifier_sync_rule(struct sfe_connection_sync *sis)
 			ct->proto.tcp.seen[1].td_maxend = sis->dest_td_max_end;
 		}
 		spin_unlock_bh(&ct->lock);
+		break;
+
+	case IPPROTO_UDP:
+		/*
+		 * In Linux connection track, UDP flow has two timeout values:
+		 * /proc/sys/net/netfilter/nf_conntrack_udp_timeout:
+		 * 	this is for uni-direction UDP flow, normally its value is 60 seconds
+		 * /proc/sys/net/netfilter/nf_conntrack_udp_timeout_stream:
+		 * 	this is for bi-direction UDP flow, normally its value is 180 seconds
+		 *
+		 * Linux will update timer of UDP flow to stream timeout once it seen packets
+		 * in reply direction. But if flow is accelerated by NSS or SFE, Linux won't
+		 * see any packets. So we have to do the same thing in our stats sync message.
+		 */
+		if (!test_bit(IPS_ASSURED_BIT, &ct->status) && acct) {
+			u_int64_t reply_pkts = atomic64_read(&SFE_ACCT_COUNTER(acct)[IP_CT_DIR_REPLY].packets);
+
+			if (reply_pkts != 0) {
+				struct nf_conntrack_l4proto *l4proto;
+				unsigned int *timeouts;
+
+				set_bit(IPS_SEEN_REPLY_BIT, &ct->status);
+				set_bit(IPS_ASSURED_BIT, &ct->status);
+
+				l4proto = __nf_ct_l4proto_find((sis->is_v6 ? AF_INET6 : AF_INET), IPPROTO_UDP);
+				timeouts = nf_ct_timeout_lookup(&init_net, ct, l4proto);
+
+				spin_lock_bh(&ct->lock);
+				ct->timeout = nfct_time_stamp + timeouts[UDP_CT_REPLIED];
+				spin_unlock_bh(&ct->lock);
+			}
+		}
 		break;
 	}
 
@@ -1663,10 +1706,12 @@ static int __init fast_classifier_init(void)
 #ifdef CONFIG_NF_CONNTRACK_EVENTS
 	/*
 	 * Register a notifier hook to get fast notifications of expired connections.
-	 * In case of CHAIN EVENTS this function always return 0 and it's the only case
-	 * that is supported.
 	 */
-	(void)nf_conntrack_register_notifier(&init_net, &fast_classifier_conntrack_notifier);
+	result = nf_conntrack_register_notifier(&init_net, &fast_classifier_conntrack_notifier);
+	if (result < 0) {
+		DEBUG_ERROR("can't register nf notifier hook: %d\n", result);
+		goto exit4;
+	}
 #endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
@@ -1721,6 +1766,11 @@ exit6:
 #endif
 
 exit5:
+#ifdef CONFIG_NF_CONNTRACK_EVENTS
+	nf_conntrack_unregister_notifier(&init_net, &fast_classifier_conntrack_notifier);
+
+exit4:
+#endif
 	nf_unregister_hooks(fast_classifier_ops_post_routing, ARRAY_SIZE(fast_classifier_ops_post_routing));
 
 exit3:

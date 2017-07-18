@@ -659,10 +659,16 @@ sfe_cm_ipv6_post_routing_hook(hooknum, ops, skb, in_unused, out, okfn)
  * sfe_cm_conntrack_event()
  *	Callback event invoked when a conntrack connection's state changes.
  */
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 static int sfe_cm_conntrack_event(struct notifier_block *this,
 				  unsigned long events, void *ptr)
+#else
+static int sfe_cm_conntrack_event(unsigned int events, struct nf_ct_event *item)
+#endif
 {
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 	struct nf_ct_event *item = ptr;
+#endif
 	struct sfe_connection_destroy sid;
 	struct nf_conn *ct = item->ct;
 	struct nf_conntrack_tuple orig_tuple;
@@ -734,9 +740,15 @@ static int sfe_cm_conntrack_event(struct notifier_block *this,
 /*
  * Netfilter conntrack event system to monitor connection tracking changes
  */
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 static struct notifier_block sfe_cm_conntrack_notifier = {
 	.notifier_call = sfe_cm_conntrack_event,
 };
+#else
+static struct nf_ct_event_notifier sfe_cm_conntrack_notifier = {
+	.fcn = sfe_cm_conntrack_event,
+};
+#endif
 #endif
 
 /*
@@ -1078,10 +1090,19 @@ static int __init sfe_cm_init(void)
 #ifdef CONFIG_NF_CONNTRACK_EVENTS
 	/*
 	 * Register a notifier hook to get fast notifications of expired connections.
-	 * In case of CHAIN EVENTS this function always return 0 and it's the only case
-	 * that is supported
+	 * Note: In CONFIG_NF_CONNTRACK_CHAIN_EVENTS enabled case, nf_conntrack_register_notifier()
+	 * function always returns 0.
 	 */
+
+#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 	(void)nf_conntrack_register_notifier(&init_net, &sfe_cm_conntrack_notifier);
+#else
+	result = nf_conntrack_register_notifier(&init_net, &sfe_cm_conntrack_notifier);
+	if (result < 0) {
+		DEBUG_ERROR("can't register nf notifier hook: %d\n", result);
+		goto exit4;
+	}
+#endif
 #endif
 
 	spin_lock_init(&sc->lock);
@@ -1093,6 +1114,12 @@ static int __init sfe_cm_init(void)
 	sfe_ipv6_register_sync_rule_callback(sfe_cm_sync_rule);
 	return 0;
 
+#ifdef CONFIG_NF_CONNTRACK_EVENTS
+#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+exit4:
+	nf_unregister_hooks(sfe_cm_ops_post_routing, ARRAY_SIZE(sfe_cm_ops_post_routing));
+#endif
+#endif
 exit3:
 	unregister_inet6addr_notifier(&sc->inet6_notifier);
 	unregister_inetaddr_notifier(&sc->inet_notifier);

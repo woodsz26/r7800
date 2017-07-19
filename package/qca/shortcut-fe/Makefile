@@ -27,6 +27,7 @@ define KernelPackage/shortcut-fe
   TITLE:=Kernel driver for SFE
   FILES:=$(PKG_BUILD_DIR)/shortcut-fe.ko $(PKG_BUILD_DIR)/shortcut-fe-ipv6.ko
   KCONFIG:=CONFIG_NF_CONNTRACK_EVENTS=y
+	AUTOLOAD:=$(call AutoProbe,shortcut-fe shortcut-fe-ipv6)
 endef
 
 define KernelPackage/shortcut-fe/Description
@@ -43,7 +44,7 @@ define KernelPackage/shortcut-fe-cm
 ifneq ($(CONFIG_PACKAGE_kmod-fast-classifier),)
   KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
 endif
-	AUTOLOAD:=$(call AutoProbe,shortcut-fe shortcut-fe-ipv6 shortcut-fe-cm)
+	AUTOLOAD:=$(call AutoProbe,shortcut-fe-cm)
 endef
 
 define KernelPackage/shortcut-fe-cm/Description
@@ -60,7 +61,7 @@ define KernelPackage/fast-classifier
 ifneq ($(CONFIG_PACKAGE_kmod-shortcut-fe-cm),)
   KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
 endif
-	AUTOLOAD:=$(call AutoLoad,z,shortcut-fe shortcut-fe-ipv6 fast-classifier)
+	AUTOLOAD:=$(call AutoLoad,z,fast-classifier)
   PROVIDES:=$(PKG_NAME)
 endef
 

@@ -1671,6 +1671,8 @@ static int __init fast_classifier_init(void)
 	DEBUG_INFO("SFE CM init\n");
 
 	hash_init(fc_conn_ht);
+	
+	DEBUG_INFO("hash initialized\n");
 
 	/*
 	 * Create sys/fast_classifier
@@ -1680,6 +1682,8 @@ static int __init fast_classifier_init(void)
 		DEBUG_ERROR("failed to register fast_classifier\n");
 		goto exit1;
 	}
+	
+	DEBUG_INFO("initializing sysfs\n");
 
 	for (i = 0; i < ARRAY_SIZE(fast_classifier_attrs); i++) {
 		result = sysfs_create_file(sc->sys_fast_classifier, &fast_classifier_attrs[i].attr);
@@ -1689,6 +1693,8 @@ static int __init fast_classifier_init(void)
 			goto exit2;
 		}
 	}
+	
+	DEBUG_INFO("setting notifier device\n");
 
 	sc->dev_notifier.notifier_call = fast_classifier_device_event;
 	sc->dev_notifier.priority = 1;
@@ -1701,6 +1707,8 @@ static int __init fast_classifier_init(void)
 	sc->inet6_notifier.notifier_call = fast_classifier_inet6_event;
 	sc->inet6_notifier.priority = 1;
 	register_inet6addr_notifier(&sc->inet6_notifier);
+	
+	DEBUG_INFO("registering netfilter hooks\n");
 
 	/*
 	 * Register our netfilter hooks.
@@ -1721,6 +1729,9 @@ static int __init fast_classifier_init(void)
 #ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 	(void)nf_conntrack_register_notifier(&init_net, &fast_classifier_conntrack_notifier);
 #else
+	
+	DEBUG_INFO("registering notifier hook\n");
+	
 	result = nf_conntrack_register_notifier(&init_net, &fast_classifier_conntrack_notifier);
 	if (result < 0) {
 		DEBUG_ERROR("can't register nf notifier hook: %d\n", result);
@@ -1730,6 +1741,9 @@ static int __init fast_classifier_init(void)
 #endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
+	
+	DEBUG_INFO("registering genetlink\n");
+	
 	result = genl_register_family_with_ops_groups(&fast_classifier_gnl_family,
 						      fast_classifier_gnl_ops,
 						      fast_classifier_genl_mcgrp);

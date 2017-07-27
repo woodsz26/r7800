@@ -8,12 +8,12 @@ set_irq_affinity() {
   
 case "$name" in
 wifi0)
-  	local irq_wifi0=`grep -E -m1 'ath10k' /proc/interrupts | cut -d ':' -f 1 | tail -n1 | tr -d ' '`
+  	local irq_wifi0=`grep -E -m1 'qcom-pcie-msi' /proc/interrupts | cut -d: -f1 | tail -n1 | tr -d ' '`
 	[ -n "$irq_wifi0" ] || echo "$name irq not found."
 	echo "$val" > "/proc/irq/$irq_wifi0/smp_affinity"
 	;;
 wifi1)
-  	local irq_wifi1=`grep -E -m2 'ath10k' /proc/interrupts | cut -d ':' -f 1 | tail -n1 | tr -d ' '`
+  	local irq_wifi1=`grep -E -m2 'qcom-pcie-msi' /proc/interrupts | cut -d: -f1 | tail -n1 | tr -d ' '`
 	[ -n "$irq_wifi1" ] || echo "$name irq not found."
 	echo "$val" > "/proc/irq/$irq_wifi1/smp_affinity"
 	;;
@@ -27,9 +27,9 @@ esac
 
 start() {
 
-. /lib/ipq806x.sh
+local board_name="cat /tmp/sysinfo/board_name"
 
-case $(ipq806x_board_name) in
+case "$board_name" in
 fritz4040)
   	set_irq_affinity eth1 2
 	set_irq_affinity wifi0 4

@@ -1,16 +1,14 @@
-From e08075c0b2a795eeeff44c5c6c847765ff522e5e Mon Sep 17 00:00:00 2001
+From b24526cad8642f974d3c3c440824ecca68ebd9f0 Mon Sep 17 00:00:00 2001
 From: Murat Sezgin <msezgin@codeaurora.org>
 Date: Tue, 25 Nov 2014 17:22:24 -0800
-Subject: bridge: Add new bridge APIs needed for network HW acceleration
+Subject: [PATCH 2/3] bridge: Add new bridge APIs needed for network HW
+ acceleration
 
 Bridge acceleration hardware needs to perform certain operations,
  currently unsupported by the existing bridge code:
- *given a certain bridge device and a MAC@, figure out on
-  which underlying slave port this MAC@ is located
- *trigger an FDB entry refresh from outside the bridge code: packets will
-  not be seen anymore in the host, once a flow has been accelerated.
-  So the hardware accelerator driver needs to keep track of the accelerated
-  flows and refresh the MACs accordingly.
+
+  ** cut **
+
  *update bridge interface statistics from outside the bridge code:
   once acceleration is enabled on a connection, packets will not flow
   through the host CPU, so we need the hardware accelerator driver to
@@ -22,16 +20,15 @@ Bridge acceleration hardware needs to perform certain operations,
 Change-Id: I67afb325796004053897d9916e2df91827b65139
 Signed-off-by: Murat Sezgin <msezgin@codeaurora.org>
 ---
- include/linux/if_bridge.h |  5 ++++
- net/bridge/br_fdb.c       | 21 +++++++++++++++-
- net/bridge/br_if.c        | 63 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+), 1 deletion(-)
+ include/linux/if_bridge.h |  2 ++
+ net/bridge/br_if.c        | 24 ++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
 diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
-index 6951d1a..77d0f61 100644
+index ef5661b..de79c00 100644
 --- a/include/linux/if_bridge.h
 +++ b/include/linux/if_bridge.h
-@@ -55,6 +55,8 @@ struct br_ip_list {
+@@ -51,6 +51,8 @@ struct br_ip_list {
  #define BR_DEFAULT_AGEING_TIME	(300 * HZ)
  
  extern void brioctl_set(int (*ioctl_hook)(struct net *, unsigned int, void __user *));
@@ -41,7 +38,7 @@ index 6951d1a..77d0f61 100644
  typedef int br_should_route_hook_t(struct sk_buff *skb);
  extern br_should_route_hook_t __rcu *br_should_route_hook;
 diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-index ec02f58..d21c2c5 100644
+index ec02f58..977415a 100644
 --- a/net/bridge/br_if.c
 +++ b/net/bridge/br_if.c
 @@ -588,3 +588,27 @@ void br_port_flags_change(struct net_bridge_port *p, unsigned long mask)
@@ -73,4 +70,5 @@ index ec02f58..d21c2c5 100644
 +EXPORT_SYMBOL_GPL(br_dev_update_stats);
 +
 -- 
-cgit v1.1
+2.7.4
+

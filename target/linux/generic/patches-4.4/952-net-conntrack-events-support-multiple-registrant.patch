@@ -1,7 +1,7 @@
-From 7df1d9b7b02836daa3f07e806fa05fc4bce99d50 Mon Sep 17 00:00:00 2001
+From 42824d4b753f84ccf885eca602c5037338b546c8 Mon Sep 17 00:00:00 2001
 From: Zhi Chen <zhichen@codeaurora.org>
 Date: Tue, 13 Jan 2015 14:28:18 -0800
-Subject: [PATCH] net: conntrack events, support multiple registrant
+Subject: [PATCH 3/3] net: conntrack events, support multiple registrant
 
 Merging this patch from kernel 3.4:
 This was supported by old (.28) kernel versions but removed
@@ -121,10 +121,10 @@ index 723b61c..fbb9c16 100644
  	struct nf_ip_net	nf_ct_proto;
  #if defined(CONFIG_NF_CONNTRACK_LABELS)
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 4692782..147625d 100644
+index 7da6cef..c374447 100644
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -124,6 +124,14 @@ config NF_CONNTRACK_TIMEOUT
+@@ -136,6 +136,14 @@ config NF_CONNTRACK_TIMEOUT
  
  	  If unsure, say `N'.
  
@@ -261,7 +261,7 @@ index 4e78c57..d3e6773 100644
  
  int nf_ct_expect_register_notifier(struct net *net,
 diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index e565b2b..186dfa3 100644
+index 9f52729..8d8f355 100644
 --- a/net/netfilter/nf_conntrack_netlink.c
 +++ b/net/netfilter/nf_conntrack_netlink.c
 @@ -28,6 +28,9 @@
@@ -274,7 +274,7 @@ index e565b2b..186dfa3 100644
  #include <linux/slab.h>
  
  #include <linux/netfilter.h>
-@@ -631,14 +634,22 @@ ctnetlink_nlmsg_size(const struct nf_conn *ct)
+@@ -629,14 +632,22 @@ ctnetlink_nlmsg_size(const struct nf_conn *ct)
  }
  
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
@@ -297,7 +297,7 @@ index e565b2b..186dfa3 100644
  	struct nf_conn *ct = item->ct;
  	struct sk_buff *skb;
  	unsigned int type;
-@@ -3262,9 +3273,15 @@ ctnetlink_stat_exp_cpu(struct sock *ctnl, struct sk_buff *skb,
+@@ -3258,9 +3269,15 @@ ctnetlink_stat_exp_cpu(struct sock *ctnl, struct sk_buff *skb,
  }
  
  #ifdef CONFIG_NF_CONNTRACK_EVENTS

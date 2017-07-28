@@ -1,16 +1,24 @@
-From b587b2b8f102cf4a70e336584443595b0e075d4e Mon Sep 17 00:00:00 2001
-From: Pavel Kubelun <be.dissent@gmail.com>
-Date: Wed, 12 Jul 2017 21:38:47 +0300
-Subject: [PATCH] conntrack: support multiple listeners in k4.9
+From 56294a39f14712f868a495f28be6b2e92f0a48c6 Mon Sep 17 00:00:00 2001
+From: Zhi Chen <zhichen@codeaurora.org>
+Date: Tue, 13 Jan 2015 14:28:18 -0800
+Subject: [PATCH 3/3] net: conntrack events, support multiple registrant
 
+Merging this patch from kernel 3.4:
+This was supported by old (.28) kernel versions but removed
+because of it's overhead.
+But we need this feature for NA connection manager. Both ipv4
+and ipv6 modules needs to register themselves to ct events.
+
+Change-Id: Iebfb254590fb594f5baf232f849d1b7ae45ef757
+Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 ---
  include/net/netfilter/nf_conntrack_ecache.h | 13 +++-
  include/net/netns/conntrack.h               |  4 ++
  net/netfilter/Kconfig                       |  8 +++
  net/netfilter/nf_conntrack_core.c           |  4 ++
- net/netfilter/nf_conntrack_ecache.c         | 96 +++++++++++++++++++++++++++++
+ net/netfilter/nf_conntrack_ecache.c         | 92 +++++++++++++++++++++++++++++
  net/netfilter/nf_conntrack_netlink.c        | 19 ++++++
- 6 files changed, 143 insertions(+), 1 deletion(-)
+ 6 files changed, 139 insertions(+), 1 deletion(-)
 
 diff --git a/include/net/netfilter/nf_conntrack_ecache.h b/include/net/netfilter/nf_conntrack_ecache.h
 index 12d967b..c2b98b6 100644
@@ -93,10 +101,10 @@ index e469e85..1d31db8 100644
  	struct nf_ip_net	nf_ct_proto;
  #if defined(CONFIG_NF_CONNTRACK_LABELS)
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index e8d56d9..ecb78e6 100644
+index 63073be..08d7aab 100644
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -124,6 +124,14 @@ config NF_CONNTRACK_TIMEOUT
+@@ -136,6 +136,14 @@ config NF_CONNTRACK_TIMEOUT
  
  	  If unsure, say `N'.
  
@@ -127,7 +135,7 @@ index 6bd1508..9b81c7c 100644
  
  err_proto:
 diff --git a/net/netfilter/nf_conntrack_ecache.c b/net/netfilter/nf_conntrack_ecache.c
-index da9df2d..3d7d0c2 100644
+index da9df2d..e0e2a8f 100644
 --- a/net/netfilter/nf_conntrack_ecache.c
 +++ b/net/netfilter/nf_conntrack_ecache.c
 @@ -18,6 +18,9 @@
@@ -232,7 +240,7 @@ index da9df2d..3d7d0c2 100644
  void nf_ct_deliver_cached_events(struct nf_conn *ct)
  {
  	struct net *net = nf_ct_net(ct);
-@@ -225,6 +306,7 @@ void nf_ct_deliver_cached_events(struct nf_conn *ct)
+@@ -225,6 +302,7 @@ void nf_ct_deliver_cached_events(struct nf_conn *ct)
  out_unlock:
  	rcu_read_unlock();
  }
@@ -240,7 +248,7 @@ index da9df2d..3d7d0c2 100644
  EXPORT_SYMBOL_GPL(nf_ct_deliver_cached_events);
  
  void nf_ct_expect_event_report(enum ip_conntrack_expect_events event,
-@@ -257,6 +339,12 @@ void nf_ct_expect_event_report(enum ip_conntrack_expect_events event,
+@@ -257,6 +335,12 @@ void nf_ct_expect_event_report(enum ip_conntrack_expect_events event,
  	rcu_read_unlock();
  }
  
@@ -253,7 +261,7 @@ index da9df2d..3d7d0c2 100644
  int nf_conntrack_register_notifier(struct net *net,
  				   struct nf_ct_event_notifier *new)
  {
-@@ -277,8 +365,15 @@ int nf_conntrack_register_notifier(struct net *net,
+@@ -277,8 +361,15 @@ int nf_conntrack_register_notifier(struct net *net,
  	mutex_unlock(&nf_ct_ecache_mutex);
  	return ret;
  }
@@ -269,7 +277,7 @@ index da9df2d..3d7d0c2 100644
  void nf_conntrack_unregister_notifier(struct net *net,
  				      struct nf_ct_event_notifier *new)
  {
-@@ -291,6 +386,7 @@ void nf_conntrack_unregister_notifier(struct net *net,
+@@ -291,6 +382,7 @@ void nf_conntrack_unregister_notifier(struct net *net,
  	RCU_INIT_POINTER(net->ct.nf_conntrack_event_cb, NULL);
  	mutex_unlock(&nf_ct_ecache_mutex);
  }

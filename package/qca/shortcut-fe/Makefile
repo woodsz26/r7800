@@ -26,7 +26,7 @@ define KernelPackage/shortcut-fe
   DEPENDS:=@IPV6
   TITLE:=Kernel driver for SFE
   FILES:=$(PKG_BUILD_DIR)/shortcut-fe.ko $(PKG_BUILD_DIR)/shortcut-fe-ipv6.ko
-  KCONFIG:=CONFIG_NF_CONNTRACK_EVENTS=y
+  KCONFIG:=CONFIG_NF_CONNTRACK_EVENTS=y CONFIG_SHORTCUT_FE=y
 	AUTOLOAD:=$(call AutoProbe,shortcut-fe shortcut-fe-ipv6)
 endef
 
@@ -38,13 +38,10 @@ define KernelPackage/shortcut-fe-cm
   SECTION:=kernel
   CATEGORY:=Kernel modules
   SUBMENU:=Network Support
-  DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe
-	CONFLICTS:=kmod-fast-classifier
+  DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe
   TITLE:=Kernel driver for SFE
   FILES:=$(PKG_BUILD_DIR)/shortcut-fe-cm.ko
-ifneq ($(CONFIG_PACKAGE_kmod-fast-classifier),)
-  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
-endif
+  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y CONFIG_NF_CONNTRACK_MARK=y
 	AUTOLOAD:=$(call AutoProbe,shortcut-fe-cm)
 endef
 
@@ -56,19 +53,17 @@ define KernelPackage/fast-classifier
   SECTION:=kernel
   CATEGORY:=Kernel modules
   SUBMENU:=Network Support
-  DEPENDS:=+kmod-ipt-conntrack-extra +kmod-shortcut-fe
-	CONFLICTS:=kmod-shortcut-fe-cm
+  DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe
   TITLE:=Kernel driver for FAST Classifier
   FILES:=$(PKG_BUILD_DIR)/fast-classifier.ko
-ifneq ($(CONFIG_PACKAGE_kmod-shortcut-fe-cm),)
-  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
-endif
+  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y CONFIG_NF_CONNTRACK_MARK=y
 	AUTOLOAD:=$(call AutoLoad,z,fast-classifier)
   PROVIDES:=$(PKG_NAME)
 endef
 
 define KernelPackage/fast-classifier/description
-FAST Classifier talks to SFE to make decisions about offloading connections
+FAST Classifier connection manager for Shortcut forwarding engine. 
+It talks to SFE to make decisions about offloading connections.
 endef
 
 define Package/fast-classifier-example
@@ -85,10 +80,10 @@ EXTRA_CFLAGS+=-DSFE_SUPPORT_IPV6
 
 MAKE_OPTS:= \
 		ARCH="$(LINUX_KARCH)" \
-		CROSS_COMPILE="$(TARGET_CROSS)" $(strip $(SFE_MAKE_OPTS)) \
+		CROSS_COMPILE="$(TARGET_CROSS)" \
 		SUBDIRS="$(PKG_BUILD_DIR)" \
-		EXTRA_CFLAGS="$(EXTRA_CFLAGS) -Wno-implicit-function-declaration" \
-		SFE_SUPPORT_IPV6=1
+		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
+		SFE_SUPPORT_IPV6=y
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

@@ -27,11 +27,9 @@ Signed-off-by: Murat Sezgin <msezgin@codeaurora.org>
  net/bridge/br_if.c        | 63 +++++++++++++++++++++++++++++++++++++++++++++++
  3 files changed, 88 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
-index 6951d1a..77d0f61 100644
 --- a/include/linux/if_bridge.h
 +++ b/include/linux/if_bridge.h
-@@ -55,6 +55,8 @@ struct br_ip_list {
+@@ -51,6 +51,8 @@ struct br_ip_list {
  #define BR_DEFAULT_AGEING_TIME	(300 * HZ)
  
  extern void brioctl_set(int (*ioctl_hook)(struct net *, unsigned int, void __user *));
@@ -40,11 +38,9 @@ index 6951d1a..77d0f61 100644
  
  typedef int br_should_route_hook_t(struct sk_buff *skb);
  extern br_should_route_hook_t __rcu *br_should_route_hook;
-diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-index ec02f58..d21c2c5 100644
 --- a/net/bridge/br_if.c
 +++ b/net/bridge/br_if.c
-@@ -588,3 +588,27 @@ void br_port_flags_change(struct net_bridge_port *p, unsigned long mask)
+@@ -588,3 +588,27 @@ void br_port_flags_change(struct net_bri
  	if (mask & BR_AUTO_MASK)
  		nbp_update_port_count(br);
  }
@@ -72,5 +68,3 @@ index ec02f58..d21c2c5 100644
 +}
 +EXPORT_SYMBOL_GPL(br_dev_update_stats);
 +
--- 
-cgit v1.1

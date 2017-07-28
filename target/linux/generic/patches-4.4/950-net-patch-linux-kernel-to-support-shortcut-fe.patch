@@ -14,8 +14,6 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  net/core/dev.c         | 21 +++++++++++++++++++--
  2 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index a74d315..9b9ed84 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
 @@ -643,7 +643,8 @@ struct sk_buff {
@@ -28,11 +26,9 @@ index a74d315..9b9ed84 100644
  
  #ifdef CONFIG_NET_SCHED
  	__u16			tc_index;	/* traffic control index */
-diff --git a/net/core/dev.c b/net/core/dev.c
-index efbf03e..79d93e1 100644
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -2710,8 +2710,13 @@ static int xmit_one(struct sk_buff *skb, struct net_device *dev,
+@@ -2732,8 +2732,13 @@ static int xmit_one(struct sk_buff *skb,
  	unsigned int len;
  	int rc;
  
@@ -48,7 +44,7 @@ index efbf03e..79d93e1 100644
  
  #ifdef CONFIG_ETHERNET_PACKET_MANGLE
  	if (!dev->eth_mangle_tx ||
-@@ -3784,6 +3789,9 @@ void netdev_rx_handler_unregister(struct net_device *dev)
+@@ -3825,6 +3830,9 @@ void netdev_rx_handler_unregister(struct
  }
  EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
  
@@ -58,7 +54,7 @@ index efbf03e..79d93e1 100644
  /*
   * Limit the use of PFMEMALLOC reserves to those protocols that implement
   * the special handling of PFMEMALLOC skbs.
-@@ -3826,6 +3834,7 @@ static int __netif_receive_skb_core(struct sk_buff *skb, bool pfmemalloc)
+@@ -3867,6 +3875,7 @@ static int __netif_receive_skb_core(stru
  	bool deliver_exact = false;
  	int ret = NET_RX_DROP;
  	__be16 type;
@@ -66,7 +62,7 @@ index efbf03e..79d93e1 100644
  
  	net_timestamp_check(!netdev_tstamp_prequeue, skb);
  
-@@ -3852,6 +3861,14 @@ another_round:
+@@ -3893,6 +3902,14 @@ another_round:
  			goto out;
  	}
  
@@ -81,5 +77,3 @@ index efbf03e..79d93e1 100644
  #ifdef CONFIG_NET_CLS_ACT
  	if (skb->tc_verd & TC_NCLS) {
  		skb->tc_verd = CLR_TC_NCLS(skb->tc_verd);
--- 
-cgit v1.1

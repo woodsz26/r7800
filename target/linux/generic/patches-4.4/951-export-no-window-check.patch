@@ -12,8 +12,6 @@ Signed-off-by: Murat Sezgin <msezgin@codeaurora.org>
  net/netfilter/nf_conntrack_proto_tcp.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_proto_tcp.c b/net/netfilter/nf_conntrack_proto_tcp.c
-index fecd4ea..6d67bd1 100644
 --- a/net/netfilter/nf_conntrack_proto_tcp.c
 +++ b/net/netfilter/nf_conntrack_proto_tcp.c
 @@ -34,12 +34,14 @@
@@ -33,5 +31,3 @@ index fecd4ea..6d67bd1 100644
  
  /* If it is set to zero, we disable picking up already established
     connections. */
--- 
-cgit v1.1

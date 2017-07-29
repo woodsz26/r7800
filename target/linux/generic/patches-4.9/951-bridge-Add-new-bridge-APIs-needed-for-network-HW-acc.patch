@@ -1,8 +1,24 @@
-From 14d848140fc18cf7215b7c1c229034cfee10e758 Mon Sep 17 00:00:00 2001
-From: Pavel Kubelun <be.dissent@gmail.com>
-Date: Wed, 12 Jul 2017 18:06:41 +0300
-Subject: [PATCH] sfe: update bridge statistics
+From cdabe46cd62d22266aed7fdae36f72a36e3558e7 Mon Sep 17 00:00:00 2001
+From: Murat Sezgin <msezgin@codeaurora.org>
+Date: Tue, 25 Nov 2014 17:22:24 -0800
+Subject: [PATCH 2/3] bridge: Add new bridge APIs needed for network HW
+ acceleration
 
+Bridge acceleration hardware needs to perform certain operations,
+ currently unsupported by the existing bridge code:
+
+  ** cut **
+
+ *update bridge interface statistics from outside the bridge code:
+  once acceleration is enabled on a connection, packets will not flow
+  through the host CPU, so we need the hardware accelerator driver to
+  maintain the statistics on the host and update them and add whatever
+  flows through the hardware.
+ These change adds the corresponding functions, and make it available
+ to other through EXPORT_SYMBOLS().
+
+Change-Id: I67afb325796004053897d9916e2df91827b65139
+Signed-off-by: Murat Sezgin <msezgin@codeaurora.org>
 ---
  include/linux/if_bridge.h |  1 +
  net/bridge/br_if.c        | 25 +++++++++++++++++++++++++
@@ -21,7 +37,7 @@ index 0911c8c..4473f62 100644
  typedef int br_should_route_hook_t(struct sk_buff *skb);
  extern br_should_route_hook_t __rcu *br_should_route_hook;
 diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-index ed0dd33..f62dfb2 100644
+index ed0dd33..342b2d9 100644
 --- a/net/bridge/br_if.c
 +++ b/net/bridge/br_if.c
 @@ -655,3 +655,28 @@ void br_port_flags_change(struct net_bridge_port *p, unsigned long mask)
@@ -53,6 +69,6 @@ index ed0dd33..f62dfb2 100644
 +		u64_stats_update_end(&stats->syncp);
 +}
 +EXPORT_SYMBOL_GPL(br_dev_update_stats);
---
-Working Copy 3.0.3
+-- 
+2.7.4
 

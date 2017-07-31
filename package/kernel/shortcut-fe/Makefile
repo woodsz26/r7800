@@ -76,14 +76,11 @@ Example user space program that communicates with fast
 classifier kernel module
 endef
 
-EXTRA_CFLAGS+=-DSFE_SUPPORT_IPV6
-
 MAKE_OPTS:= \
 		ARCH="$(LINUX_KARCH)" \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
 		SUBDIRS="$(PKG_BUILD_DIR)" \
-		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
-		SFE_SUPPORT_IPV6=y
+		EXTRA_CFLAGS="$(EXTRA_CFLAGS)"
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

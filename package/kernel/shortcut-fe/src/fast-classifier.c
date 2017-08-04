@@ -514,18 +514,14 @@ static void fast_classifier_send_genl_msg(int msg, struct fast_classifier_tuple 
 #endif
 	switch (msg) {
 	case FAST_CLASSIFIER_C_OFFLOADED:
-		if (rc == 0) {
-			atomic_inc(&offloaded_msgs);
-		} else {
+		atomic_inc(&offloaded_msgs);
+		if (rc != 0)
 			atomic_inc(&offloaded_fail_msgs);
-		}
 		break;
 	case FAST_CLASSIFIER_C_DONE:
-		if (rc == 0) {
-			atomic_inc(&done_msgs);
-		} else {
+		atomic_inc(&done_msgs);
+		if (rc != 0)
 			atomic_inc(&done_fail_msgs);
-		}
 		break;
 	default:
 		DEBUG_ERROR("fast-classifer: Unknown message type sent!\n");
@@ -1570,7 +1566,7 @@ static ssize_t fast_classifier_get_debug_info(struct device *dev,
 
 	spin_lock_bh(&sfe_connections_lock);
 	len += scnprintf(buf, PAGE_SIZE - len, "size=%d offload=%d offload_no_match=%d"
-			" offloaded=%d done=%d offloaded_fail=%d done_fail=%d\n",
+			" offloaded=%d done=%d offl_dbg_msg_fail=%d done_dbg_msg_fail=%d\n",
 			sfe_connections_size,
 			atomic_read(&offload_msgs),
 			atomic_read(&offload_no_match_msgs),

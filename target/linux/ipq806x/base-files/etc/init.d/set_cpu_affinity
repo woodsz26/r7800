@@ -17,6 +17,11 @@ wifi1)
 	[ -n "$irq_wifi1" ] || echo "$name irq not found."
 	echo "$val" > "/proc/irq/$irq_wifi1/smp_affinity"
 	;;
+wifi2)
+  	local irq_wifi1=`grep -E -m3 'ath10k_ahb|qcom-pcie-msi' /proc/interrupts | cut -d: -f1 | tail -n1 | tr -d ' '`
+	[ -n "$irq_wifi1" ] || echo "$name irq not found."
+	echo "$val" > "/proc/irq/$irq_wifi1/smp_affinity"
+	;;
 *)
   	local irq=`grep -m 1 "$name" /proc/interrupts | cut -d: -f1 | sed 's, *,,'`
 	[ -n "$irq" ] || echo "$name irq not found."
@@ -46,8 +51,9 @@ fritz4040)
 	set_irq_affinity edma_eth_tx14 8
 	set_irq_affinity edma_eth_tx15 8
 	set_irq_affinity edma_eth_rx6 8
-	set_irq_affinity wifi0 4
-	set_irq_affinity wifi1 8
+	set_irq_affinity wifi0 2
+	set_irq_affinity wifi1 4
+	set_irq_affinity wifi2 8
 	;;
 ap148 |\
 c2600 |\

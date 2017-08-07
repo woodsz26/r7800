@@ -752,6 +752,7 @@ static unsigned int fast_classifier_post_routing(struct sk_buff *skb, bool is_v4
 	struct nf_conntrack_tuple orig_tuple;
 	struct nf_conntrack_tuple reply_tuple;
 	struct sfe_connection *conn;
+	SFE_NF_CONN_ACCT(acct);
 
 	/*
 	 * Don't process broadcast or multicast packets.
@@ -815,6 +816,21 @@ static unsigned int fast_classifier_post_routing(struct sk_buff *skb, bool is_v4
 		fast_classifier_incr_exceptions(FAST_CL_EXCEPTION_CT_IS_ALG);
 		DEBUG_TRACE("connection has helper\n");
 		return NF_ACCEPT;
+	}
+
+	/*
+	 * Check if the acceleration of a flow could be rejected quickly.
+	 */
+	acct = nf_conn_acct_find(ct);
+	if (acct) {
+		long long packets = atomic64_read(&SFE_ACCT_COUNTER(acct)[CTINFO2DIR(ctinfo)].packets);
+		if ((packets > 0xff) && (packets & 0xff)) {
+			/*
+			 * Connection hits slow path at least 256 times, so it must be not able to accelerate.
+			 * But we also give it a chance to walk through ECM every 256 packets
+			 */
+			return NF_ACCEPT;
+		}
 	}
 
 	memset(&sic, 0, sizeof(sic));

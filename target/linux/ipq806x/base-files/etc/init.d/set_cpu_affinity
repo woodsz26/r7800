@@ -67,8 +67,9 @@ r7500 |\
 r7500v2 |\
 r7800 |\
 vr2600v)
-  	set_irq_affinity eth0 2
-	set_irq_affinity wifi1 2
+  set_irq_affinity eth0 2
+	set_irq_affinity eth1 2
+	set_irq_affinity wifi0 2
 	;;
 *)
 	echo "Unsupported hardware. CPU affinity is not adjusted."

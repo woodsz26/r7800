@@ -1,0 +1,63 @@
+From a5513a09cbb946e9d031fb65d6c2ac7c32c9042c Mon Sep 17 00:00:00 2001
+From: James Hogan <james.hogan@imgtec.com>
+Date: Thu, 10 Aug 2017 22:56:47 +0200
+Subject: MIPS: work around aliasing issue with VDSO
+
+I notice that the mips_vdso_data is updated by update_vsyscall() via
+kseg0, however userland will be accessing it via the mapping 1 page
+below the VDSO.
+
+If the kernel data happened to be placed such that the mips_vdso_data in
+kseg0 and the user mapping had different page colours then you could
+easily hit aliasing issues. A couple of well placed flushes or some more
+careful placement of the VDSO data might well fix it, as could some
+random patch changing the positioning of the data such that it
+coincidentally lined up on the same colour.
+
+The patch unfortunately hacks arch_get_unmapped_area_common so that it
+does the colour alignment on non-shared anonymous pages, as long as
+non-zero pgoff is provided. Hopefully no userland code would try
+mmap'ing anonymous memory with a file offset, and so it should be
+harmless.
+
+It doesn't look like we can just pass MAP_SHARED to avoid the hack as
+then pgoff will get cleared by get_unmapped_area()).
+---
+ arch/mips/kernel/vdso.c | 7 ++++++-
+ arch/mips/mm/mmap.c     | 2 +-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index f9dbfb14af33..9509b5122e70 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -129,7 +129,12 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	vvar_size = gic_size + PAGE_SIZE;
+ 	size = vvar_size + image->size;
+ 
+-	base = get_unmapped_area(NULL, 0, size, 0, 0);
++	/*
++	 * Hack to get the user mapping of the VDSO data page matching the cache
++	 * colour of its kseg0 address.
++	 */
++	base = get_unmapped_area(NULL, 0, size,
++			(virt_to_phys(&vdso_data) - gic_size) >> PAGE_SHIFT, 0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+ 		goto out;
+diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
+index d08ea3ff0f53..cb468b0ea45c 100644
+--- a/arch/mips/mm/mmap.c
++++ b/arch/mips/mm/mmap.c
+@@ -80,7 +80,7 @@ static unsigned long arch_get_unmapped_area_common(struct file *filp,
+ 	}
+ 
+ 	do_color_align = 0;
+-	if (filp || (flags & MAP_SHARED))
++	if (filp || (flags & MAP_SHARED) || pgoff)
+ 		do_color_align = 1;
+ 
+ 	/* requesting a specific address */
+-- 
+2.11.0
+

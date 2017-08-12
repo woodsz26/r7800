@@ -87,6 +87,7 @@ ramips_setup_interfaces()
 	kn|\
 	kn_rc|\
 	mac1200rv2|\
+	mir3g|\
 	miwifi-mini|\
 	miwifi-nano|\
 	mt7621|\

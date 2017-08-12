@@ -89,6 +89,7 @@ platform_check_image() {
 	microwrt|\
 	miniembplug|\
 	miniembwifi|\
+	mir3g|\
 	miwifi-mini|\
 	miwifi-nano|\
 	mlw221|\
@@ -297,6 +298,7 @@ platform_do_upgrade() {
 
 	case "$board" in
 	hc5962|\
+	mir3g|\
 	r6220|\
 	ubnt-erx|\
 	ubnt-erx-sfp)

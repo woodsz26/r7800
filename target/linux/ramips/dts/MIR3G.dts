@@ -7,7 +7,7 @@
 
 / {
 	compatible = "xiaomi,mir3g", "mediatek,mt7621-soc";
-	model = "Mi Router 3G";
+	model = "Xiaomi Mi Router 3G";
 
 	memory@0 {
 		device_type = "memory";

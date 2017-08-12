@@ -157,6 +157,7 @@
 
 &ethernet {
 	mtd-mac-address = <&factory 0xe000>;
+	mediatek,portmap = "lwlll";
 };
 
 &pinctrl {

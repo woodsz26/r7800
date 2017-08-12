@@ -69,13 +69,13 @@
 	partition@c0000 {
 		label = "Bdata";
 		reg = <0xc0000 0x40000>;
-    read-only;
+		read-only;
 	};
 
 	factory: partition@100000 {
 		label = "Factory";
 		reg = <0x100000 0x40000>;
-    read-only;
+		read-only;
 	};
 
 	partition@140000 {

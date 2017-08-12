@@ -105,6 +105,15 @@ define Device/k2p
 endef
 TARGET_DEVICES += k2p
 
+define Device/mir3g
+  DTS := MIR3G
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  DEVICE_TITLE := Xiaomi Mi Router 3G
+  DEVICE_PACKAGES := \
+	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport wpad-mini
+endef
+TARGET_DEVICES += mir3g
+
 define Device/mt7621
   DTS := MT7621
   BLOCKSIZE := 64k

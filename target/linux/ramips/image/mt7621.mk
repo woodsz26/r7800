@@ -109,6 +109,7 @@ define Device/mir3g
   DTS := MIR3G
   IMAGE_SIZE := $(ralink_default_fw_size_32M)
   DEVICE_TITLE := Xiaomi Mi Router 3G
+  SUPPORTED_DEVICES += R3G
   DEVICE_PACKAGES := \
 	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport wpad-mini
 endef

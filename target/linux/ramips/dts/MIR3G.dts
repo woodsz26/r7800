@@ -101,7 +101,6 @@
 	partition@200000 {
 		label = "kernel0";
 		reg = <0x200000 0x400000>;
-		read-only;
 	};
 
 

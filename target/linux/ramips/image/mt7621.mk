@@ -107,7 +107,16 @@ TARGET_DEVICES += k2p
 
 define Device/mir3g
   DTS := MIR3G
-  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 4096k
+  KERNEL := $(KERNEL_DTB) | uImage lzma
+  IMAGE_SIZE := 32768k
+  UBINIZE_OPTS := -E 5
+  IMAGES := sysupgrade.tar kernel.bin rootfs.bin
+  IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  IMAGE/kernel.bin := append-kernel
+  IMAGE/rootfs.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
   DEVICE_TITLE := Xiaomi Mi Router 3G
   SUPPORTED_DEVICES += R3G
   DEVICE_PACKAGES := \

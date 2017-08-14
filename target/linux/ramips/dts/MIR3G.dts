@@ -31,8 +31,8 @@
 			gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
 		};
 
-		internet {
-			label = "mir3g:yellow:wan";
+		status {
+			label = "mir3g:yellow:status";
 			gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
 		};
 	};

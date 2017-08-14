@@ -156,13 +156,13 @@
 
 &ethernet {
 	mtd-mac-address = <&factory 0xe000>;
-	mediatek,portmap = "lwlll";
+	/* mediatek,portmap = "lwlll"; */
 };
 
 &pinctrl {
 	state_default: pinctrl0 {
 		gpio {
-			ralink,group = "uart3", "rgmii2";
+			ralink,group = "uart3", "jtag";
 			ralink,function = "gpio";
 		};
 	};

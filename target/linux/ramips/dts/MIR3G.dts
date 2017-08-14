@@ -22,18 +22,18 @@
 		compatible = "gpio-leds";
 
 		power {
-			label = "mir3g:blue:power";
-			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
+			label = "mir3g:red:power";
+			gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
 		};
 
 		usb {
-			label = "mir3g:green:usb";
-			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+			label = "mir3g:blue:usb";
+			gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
 		};
 
 		internet {
-			label = "mir3g:green:wan";
-			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+			label = "mir3g:yellow:wan";
+			gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
 		};
 	};
 

@@ -15,7 +15,7 @@
 	};
 
 	chosen {
-		bootargs = "console=ttyS1,115200n8";
+		bootargs = "console=ttyS0,115200n8";
 	};
 
 	gpio-leds {
@@ -156,4 +156,13 @@
 &ethernet {
 	mtd-mac-address = <&factory 0xe000>;
 	mediatek,portmap = "lwlll";
+};
+
+&pinctrl {
+	state_default: pinctrl0 {
+		gpio {
+			ralink,group = "uart2", "uart3", "rgmii2";
+			ralink,function = "gpio";
+		};
+	};
 };

@@ -161,7 +161,7 @@
 &pinctrl {
 	state_default: pinctrl0 {
 		gpio {
-			ralink,group = "uart3", "rgmii2", "pci";
+			ralink,group = "uart3", "rgmii2", "pcie";
 			ralink,function = "gpio";
 		};
 	};

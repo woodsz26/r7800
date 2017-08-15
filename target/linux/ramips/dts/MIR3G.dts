@@ -14,6 +14,10 @@
 		reg = <0x0 0x10000000>;
 	};
 
+	chosen {
+		bootargs = "console=ttyS1,115200n8";
+	};
+
 	gpio-leds {
 		compatible = "gpio-leds";
 

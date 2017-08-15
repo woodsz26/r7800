@@ -107,7 +107,6 @@
 	partition@600000 {
 		label = "kernel1";
 		reg = <0x600000 0x400000>;
-		read-only;
 	};
 
 

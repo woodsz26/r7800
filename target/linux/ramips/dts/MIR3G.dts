@@ -161,7 +161,7 @@
 &pinctrl {
 	state_default: pinctrl0 {
 		gpio {
-			ralink,group = "uart3", "rgmii2", "pcie";
+			ralink,group = "wdt", "rgmii2", "rgmii1", "wdt rst", "jtag", "mdio", "uart3", "uart2", "uart1", "i2c", "pcie";
 			ralink,function = "gpio";
 		};
 	};

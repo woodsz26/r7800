@@ -252,6 +252,7 @@ platform_check_image() {
 		return 0
 		;;
 	hc5962|\
+	mir3g|\
 	r6220)
 		# these boards use metadata images
 		return 0

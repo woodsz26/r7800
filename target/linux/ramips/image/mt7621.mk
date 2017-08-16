@@ -110,7 +110,7 @@ define Device/mir3g
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   KERNEL_SIZE := 4096k
-  KERNEL := $(KERNEL_DTB) | uImage lzma
+  KERNEL := $(KERNEL_DTB) | pad-to $$(KERNEL_SIZE)  | uImage lzma
   IMAGE_SIZE := 32768k
   UBINIZE_OPTS := -E 5
   IMAGES := sysupgrade.tar kernel.bin rootfs.bin

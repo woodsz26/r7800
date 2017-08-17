@@ -90,14 +90,19 @@
 		read-only;
 	};
 
-
 	partition@1c0000 {
 		label = "reserved0";
 		reg = <0x1c0000 0x40000>;
 		read-only;
 	};
 
-
+	/* 
+	 * kernel0 partition should be erased, so 
+	 * u-boot in failsafe routine switches 
+	 * to next one looking for kernel image.
+	 * To remind about this fact rename kernel0
+	 * into kernel_erase.
+	 */
 	partition@200000 {
 		label = "kernel_erase";
 		reg = <0x200000 0x400000>;
@@ -108,7 +113,14 @@
 		reg = <0x600000 0x400000>;
 	};
 
-
+	/* ubi partition is the result of squashing
+	 * next consequent stock partitions:
+	 * - rootfs0 (rootfs partition for stock kernel0), 
+	 * - rootfs1 (rootfs partition for stock failsafe kernel1), 
+	 * - overlayfs (used as ubi overlay in stock fw)
+	 * resulting in merely 123MiB space for
+	 * packages.
+	 */
 	partition@600000 {
 		label = "ubi";
 		reg = <0xa00000 0x7580000>;

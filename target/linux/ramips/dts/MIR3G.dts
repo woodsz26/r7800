@@ -121,7 +121,7 @@
 	 * resulting in merely 123MiB space for
 	 * packages.
 	 */
-	partition@600000 {
+	partition@a00000 {
 		label = "ubi";
 		reg = <0xa00000 0x7580000>;
 	};

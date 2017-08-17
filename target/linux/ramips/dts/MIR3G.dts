@@ -21,7 +21,7 @@
 	gpio-leds {
 		compatible = "gpio-leds";
 
-		power {
+		wan {
 			label = "mir3g:red:wan";
 			gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
 		};

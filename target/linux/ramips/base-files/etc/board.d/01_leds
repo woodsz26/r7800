@@ -243,7 +243,8 @@ miniembplug)
 	set_usb_led "$board:green:mobile"
 	;;
 mir3g)
-	ucidef_set_led_default "power" "power" "$board:red:power" "1"
+	ucidef_set_led_netdev "eth" "Ethernet" "$board:red:wan" "eth0"
+	set_usb_led "$board:blue:usb"
 	;;
 miwifi-mini)
 	ucidef_set_led_default "power" "power" "$board:red:status" "1"

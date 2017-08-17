@@ -99,7 +99,7 @@
 
 
 	partition@200000 {
-		label = "kernel0";
+		label = "kernel_erase";
 		reg = <0x200000 0x400000>;
 	};
 

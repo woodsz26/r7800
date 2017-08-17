@@ -99,36 +99,15 @@
 
 
 	partition@200000 {
-		label = "kernel0";
+		label = "kernel";
 		reg = <0x200000 0x400000>;
 	};
 
 
 	partition@600000 {
-		label = "kernel";
-		reg = <0x600000 0x400000>;
-	};
-
-
-	partition@a00000 {
 		label = "ubi";
-		reg = <0xa00000 0x2000000>;
+		reg = <0x600000 0x7980000>;
 	};
-
-
-	partition@2a00000 {
-		label = "rootfs1";
-		reg = <0x2a00000 0x2000000>;
-		read-only;
-	};
-
-
-	partition@4a00000 {
-		label = "overlay";
-		reg = <0x4a00000 0x3580000>;
-		read-only;
-	};
-
 };
 
 &pcie {

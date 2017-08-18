@@ -115,8 +115,8 @@
 
 	/* ubi partition is the result of squashing
 	 * next consequent stock partitions:
-	 * - rootfs0 (rootfs partition for stock kernel0), 
-	 * - rootfs1 (rootfs partition for stock failsafe kernel1), 
+	 * - rootfs0 (rootfs partition for stock kernel), 
+	 * - rootfs1 (rootfs partition if primary fails), 
 	 * - overlayfs (used as ubi overlay in stock fw)
 	 * resulting in merely 123MiB space for
 	 * packages.
@@ -131,19 +131,18 @@
 	status = "okay";
 
 	pcie0 {
-		mt76@0,0 {
+		mt76@14c3,7603 {
+			compatible = "pci14c3,7603";
 			reg = <0x0000 0 0 0 0>;
-			device_type = "pci";
 			mediatek,mtd-eeprom = <&factory 0x0000>;
 			ieee80211-freq-limit = <2400000 2500000>;
 		};
-	};
-		
+	};	
 
 	pcie1 {
-		mt76@1,0 {
+		mt76@14c3,7662 {
+			compatible = "pci14c3,7662";
 			reg = <0x0000 0 0 0 0>;
-			device_type = "pci";
 			mediatek,mtd-eeprom = <&factory 0x8000>;
 			ieee80211-freq-limit = <5000000 6000000>;
 		};

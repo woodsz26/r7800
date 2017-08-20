@@ -1,0 +1,22 @@
+From 7b0da8e6542c2ddb3e1342413bd6d539c60fcab5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E5=B0=8F=E6=A1=A5?= <29551030@qq.com>
+Date: Sun, 26 Feb 2017 19:07:28 +0800
+Subject: [PATCH] mac80211: survey result add noise info
+
+---
+ mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mac80211.c b/mac80211.c
+index c757254..e687336 100644
+--- a/mac80211.c
++++ b/mac80211.c
+@@ -322,7 +322,7 @@ int mt76_get_survey(struct ieee80211_hw *hw, int idx,
+ 
+ 	memset(survey, 0, sizeof(*survey));
+ 	survey->channel = chan;
+-	survey->filled = SURVEY_INFO_TIME | SURVEY_INFO_TIME_BUSY;
++	survey->filled = SURVEY_INFO_NOISE_DBM | SURVEY_INFO_TIME | SURVEY_INFO_TIME_BUSY;
+ 	if (chan == dev->main_chan)
+ 		survey->filled |= SURVEY_INFO_IN_USE;
+ 

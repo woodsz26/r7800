@@ -1,0 +1,193 @@
+From d12a8278a2810e8a134172611fbaa61e240f97ae Mon Sep 17 00:00:00 2001
+From: Rosen Penev <rosenp@gmail.com>
+Date: Sat, 1 Jul 2017 20:35:35 -0700
+Subject: [PATCH] Fix errors found by cppcheck
+
+Mismatching declarations as well as unused results.
+
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ mt7603.h        | 4 ++--
+ mt7603_dma.c    | 3 +--
+ mt76x2.h        | 8 ++++----
+ mt76x2_dfs.c    | 2 +-
+ mt76x2_dma.c    | 3 +--
+ mt76x2_eeprom.c | 2 +-
+ mt76x2_mac.c    | 2 +-
+ mt76x2_mac.h    | 2 +-
+ mt76x2_mcu.h    | 2 +-
+ tx.c            | 2 +-
+ 10 files changed, 14 insertions(+), 16 deletions(-)
+
+diff --git a/mt7603.h b/mt7603.h
+index be074be..645446b 100644
+--- a/mt7603.h
++++ b/mt7603.h
+@@ -236,7 +236,7 @@ int mt7603_mcu_set_timing(struct mt7603_dev *dev, int slot, int sifs, int rifs,
+ 			  int eifs);
+ void mt7603_mcu_exit(struct mt7603_dev *dev);
+ 
+-void mt7603_wtbl_init(struct mt7603_dev *dev, int idx, int vif, const u8 *addr);
++void mt7603_wtbl_init(struct mt7603_dev *dev, int idx, int vif, const u8 *mac_addr);
+ void mt7603_wtbl_clear(struct mt7603_dev *dev, int idx);
+ void mt7603_wtbl_update_cap(struct mt7603_dev *dev, struct ieee80211_sta *sta);
+ void mt7603_wtbl_set_rates(struct mt7603_dev *dev, struct mt7603_sta *sta,
+@@ -254,7 +254,7 @@ int mt7603_tx_prepare_skb(struct mt76_dev *mdev, void *txwi_ptr,
+ void mt7603_tx_complete_skb(struct mt76_dev *mdev, struct mt76_queue *q,
+ 			    struct mt76_queue_entry *e, bool flush);
+ 
+-void mt7603_queue_rx_skb(struct mt76_dev *dev, enum mt76_rxq_id q,
++void mt7603_queue_rx_skb(struct mt76_dev *mdev, enum mt76_rxq_id q,
+ 			 struct sk_buff *skb);
+ void mt7603_rx_poll_complete(struct mt76_dev *mdev, enum mt76_rxq_id q);
+ 
+diff --git a/mt7603_dma.c b/mt7603_dma.c
+index 828c50d..4736c58 100644
+--- a/mt7603_dma.c
++++ b/mt7603_dma.c
+@@ -25,7 +25,6 @@ mt7603_tx_queue_mcu(struct mt7603_dev *dev, enum mt76_txq_id qid,
+ 	struct mt76_queue *q = &dev->mt76.q_tx[qid];
+ 	struct mt76_queue_buf buf;
+ 	dma_addr_t addr;
+-	int idx;
+ 
+ 	addr = dma_map_single(dev->mt76.dev, skb->data, skb->len, DMA_TO_DEVICE);
+ 	if (dma_mapping_error(dev->mt76.dev, addr))
+@@ -34,7 +33,7 @@ mt7603_tx_queue_mcu(struct mt7603_dev *dev, enum mt76_txq_id qid,
+ 	buf.addr = addr;
+ 	buf.len = skb->len;
+ 	spin_lock_bh(&q->lock);
+-	idx = mt76_queue_add_buf(dev, q, &buf, 1, 0, skb, NULL);
++	mt76_queue_add_buf(dev, q, &buf, 1, 0, skb, NULL);
+ 	mt76_queue_kick(dev, q);
+ 	spin_unlock_bh(&q->lock);
+ 
+diff --git a/mt76x2.h b/mt76x2.h
+index 6311eaa..0bcf405 100644
+--- a/mt76x2.h
++++ b/mt76x2.h
+@@ -200,20 +200,20 @@ int mt76x2_tx_queue_mcu(struct mt76x2_dev *dev, enum mt76_txq_id qid,
+ void mt76x2_tx(struct ieee80211_hw *hw, struct ieee80211_tx_control *control,
+ 	       struct sk_buff *skb);
+ void mt76x2_tx_complete(struct mt76x2_dev *dev, struct sk_buff *skb);
+-int mt76x2_tx_prepare_skb(struct mt76_dev *dev, void *txwi_ptr,
++int mt76x2_tx_prepare_skb(struct mt76_dev *mdev, void *txwi,
+ 			  struct sk_buff *skb, struct mt76_queue *q,
+ 			  struct mt76_wcid *wcid, struct ieee80211_sta *sta,
+ 			  u32 *tx_info);
+ void mt76x2_tx_complete_skb(struct mt76_dev *mdev, struct mt76_queue *q,
+ 			    struct mt76_queue_entry *e, bool flush);
+ 
+-void mt76x2_pre_tbtt_tasklet(unsigned long data);
++void mt76x2_pre_tbtt_tasklet(unsigned long arg);
+ 
+-void mt76x2_rx_poll_complete(struct mt76_dev *dev, enum mt76_rxq_id q);
++void mt76x2_rx_poll_complete(struct mt76_dev *mdev, enum mt76_rxq_id q);
+ void mt76x2_queue_rx_skb(struct mt76_dev *mdev, enum mt76_rxq_id q,
+ 			 struct sk_buff *skb);
+ 
+-void mt76x2_update_channel(struct mt76_dev *dev);
++void mt76x2_update_channel(struct mt76_dev *mdev);
+ 
+ s8 mt76x2_tx_get_max_txpwr_adj(struct mt76x2_dev *dev,
+ 			       const struct ieee80211_tx_rate *rate);
+diff --git a/mt76x2_dfs.c b/mt76x2_dfs.c
+index 07bd3c7..01714d6 100644
+--- a/mt76x2_dfs.c
++++ b/mt76x2_dfs.c
+@@ -295,7 +295,7 @@ static bool mt76x2_dfs_check_hw_pulse(struct mt76x2_dev *dev,
+ 	return ret;
+ }
+ 
+-void mt76x2_dfs_tasklet(unsigned long arg)
++static void mt76x2_dfs_tasklet(unsigned long arg)
+ {
+ 	struct mt76x2_dev *dev = (struct mt76x2_dev *)arg;
+ 	struct mt76x2_dfs_pattern_detector *dfs_pd = &dev->dfs_pd;
+diff --git a/mt76x2_dma.c b/mt76x2_dma.c
+index 06e027a..c010788 100644
+--- a/mt76x2_dma.c
++++ b/mt76x2_dma.c
+@@ -25,7 +25,6 @@ mt76x2_tx_queue_mcu(struct mt76x2_dev *dev, enum mt76_txq_id qid,
+ 	struct mt76_queue_buf buf;
+ 	dma_addr_t addr;
+ 	u32 tx_info;
+-	int idx;
+ 
+ 	tx_info = MT_MCU_MSG_TYPE_CMD |
+ 		  FIELD_PREP(MT_MCU_MSG_CMD_TYPE, cmd) |
+@@ -41,7 +40,7 @@ mt76x2_tx_queue_mcu(struct mt76x2_dev *dev, enum mt76_txq_id qid,
+ 	buf.addr = addr;
+ 	buf.len = skb->len;
+ 	spin_lock_bh(&q->lock);
+-	idx = mt76_queue_add_buf(dev, q, &buf, 1, tx_info, skb, NULL);
++	mt76_queue_add_buf(dev, q, &buf, 1, tx_info, skb, NULL);
+ 	mt76_queue_kick(dev, q);
+ 	spin_unlock_bh(&q->lock);
+ 
+diff --git a/mt76x2_eeprom.c b/mt76x2_eeprom.c
+index 6955888..db0256a 100644
+--- a/mt76x2_eeprom.c
++++ b/mt76x2_eeprom.c
+@@ -424,7 +424,7 @@ mt76x2_rate_power_val(u8 val)
+ 
+ void mt76x2_get_rate_power(struct mt76x2_dev *dev, struct mt76_rate_power *t)
+ {
+-	bool is_5ghz = false;
++	bool is_5ghz;
+ 	u16 val;
+ 
+ 	is_5ghz = dev->mt76.chandef.chan->band == NL80211_BAND_5GHZ;
+diff --git a/mt76x2_mac.c b/mt76x2_mac.c
+index 0dcc493..b224be6 100644
+--- a/mt76x2_mac.c
++++ b/mt76x2_mac.c
+@@ -646,7 +646,7 @@ int mt76x2_mac_set_beacon(struct mt76x2_dev *dev, u8 vif_idx,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(dev->beacons); i++) {
+ 		if (vif_idx == i) {
+-			force_update = !!dev->beacons[i] ^ !!skb;
++			force_update = ((!!dev->beacons[i]) ^ (!!skb));
+ 
+ 			if (dev->beacons[i])
+ 				dev_kfree_skb(dev->beacons[i]);
+diff --git a/mt76x2_mac.h b/mt76x2_mac.h
+index 3012880..7236e57 100644
+--- a/mt76x2_mac.h
++++ b/mt76x2_mac.h
+@@ -164,7 +164,7 @@ void mt76x2_mac_resume(struct mt76x2_dev *dev);
+ void mt76x2_mac_set_bssid(struct mt76x2_dev *dev, u8 idx, const u8 *addr);
+ 
+ int mt76x2_mac_process_rx(struct mt76x2_dev *dev, struct sk_buff *skb,
+-			  void *rxwi);
++			  void *rxi);
+ void mt76x2_mac_write_txwi(struct mt76x2_dev *dev, struct mt76x2_txwi *txwi,
+ 			   struct sk_buff *skb, struct mt76_wcid *wcid,
+ 			   struct ieee80211_sta *sta);
+diff --git a/mt76x2_mcu.h b/mt76x2_mcu.h
+index f5af7ec..47d7684 100644
+--- a/mt76x2_mcu.h
++++ b/mt76x2_mcu.h
+@@ -129,7 +129,7 @@ struct mt76x2_tssi_comp {
+ 
+ int mt76x2_mcu_calibrate(struct mt76x2_dev *dev, enum mcu_calibration type,
+ 			 u32 param);
+-int mt76x2_mcu_tssi_comp(struct mt76x2_dev *dev, struct mt76x2_tssi_comp *data);
++int mt76x2_mcu_tssi_comp(struct mt76x2_dev *dev, struct mt76x2_tssi_comp *tssi_data);
+ int mt76x2_mcu_init_gain(struct mt76x2_dev *dev, u8 channel, u32 gain,
+ 			 bool force);
+ 
+diff --git a/tx.c b/tx.c
+index 812a527..5a4957e 100644
+--- a/tx.c
++++ b/tx.c
+@@ -295,7 +295,7 @@ mt76_txq_send_burst(struct mt76_dev *dev, struct mt76_queue *hwq,
+ 	struct ieee80211_txq *txq = mtxq_to_txq(mtxq);
+ 	struct ieee80211_tx_info *info;
+ 	struct mt76_wcid *wcid = mtxq->wcid;
+-	struct sk_buff *skb = NULL;
++	struct sk_buff *skb;
+ 	int n_frames = 1, limit;
+ 	struct ieee80211_tx_rate tx_rate;
+ 	bool ampdu;
+  

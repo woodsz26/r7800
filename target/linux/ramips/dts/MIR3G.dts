@@ -178,6 +178,8 @@
 			ieee80211-freq-limit = <5000000 6000000>;
 		};
 	};
+	
+	/delete-node/ pcie2;
 };
 
 &ethernet {

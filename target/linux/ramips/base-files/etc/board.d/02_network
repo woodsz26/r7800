@@ -426,7 +426,8 @@ ramips_setup_macs()
 		wan_mac=$(macaddr_add "$lan_mac" 1)
 		;;
 	mir3g)
-		lan_mac=$(mtd_get_mac_binary Factory e006)
+		lan_mac=$(mtd_get_mac_binary Factory e000)
+		wan_mac=$(mtd_get_mac_binary Factory e006)
 		;;
 	miwifi-mini)
 		wan_mac=$(cat /sys/class/net/eth0/address)

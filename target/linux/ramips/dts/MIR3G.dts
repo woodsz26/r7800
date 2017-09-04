@@ -96,7 +96,7 @@
 	};
 
 	partition@200000 {
-		label = "kernel0_reserved";
+		label = "kernel0_rsvd";
 		reg = <0x200000 0x400000>;
 	};
 

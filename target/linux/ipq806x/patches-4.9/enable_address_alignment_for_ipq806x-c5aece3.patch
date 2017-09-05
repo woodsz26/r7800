@@ -1,0 +1,38 @@
+From c5aece38d914698ec09025f408ef0758698a6ffc Mon Sep 17 00:00:00 2001
+From: Pavel Kubelun <be.dissent@gmail.com>
+Date: Tue, 5 Sep 2017 16:33:35 +0300
+Subject: [PATCH] enable address alignment for ipq806x
+
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+index b6b2028..2e56a6c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+@@ -257,6 +257,7 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
+ {
+ 	struct plat_stmmacenet_data *plat_dat;
+ 	struct stmmac_resources stmmac_res;
++	struct stmmac_dma_cfg *dma_cfg;
+ 	struct device *dev = &pdev->dev;
+ 	struct ipq806x_gmac *gmac;
+ 	int val;
+@@ -349,6 +350,13 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
+ 	plat_dat->has_gmac = true;
+ 	plat_dat->bsp_priv = gmac;
+ 	plat_dat->fix_mac_speed = ipq806x_gmac_fix_mac_speed;
++	
++	dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
++								GFP_KERNEL);
++
++	dma_cfg->aal = 1;
++ 
++	plat_dat->dma_cfg = dma_cfg;
+ 
+ 	err = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+ 	if (err)
+--
+Working Copy 3.0.8
+

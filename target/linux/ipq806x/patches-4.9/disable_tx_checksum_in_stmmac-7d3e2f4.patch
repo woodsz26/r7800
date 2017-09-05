@@ -1,0 +1,25 @@
+From 7d3e2f426e2c1a93d731eceaf36b1b7a003f7e6a Mon Sep 17 00:00:00 2001
+From: Pavel Kubelun <be.dissent@gmail.com>
+Date: Tue, 5 Sep 2017 15:48:48 +0300
+Subject: [PATCH] disable tx checksum in stmmac
+
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_dma.c
+index 95bb829..214d8d9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_dma.c
+@@ -242,7 +242,7 @@ static void dwmac1000_get_hw_feature(void __iomem *ioaddr,
+ 	dma_cap->eee = (hw_cap & DMA_HW_FEAT_EEESEL) >> 14;
+ 	dma_cap->av = (hw_cap & DMA_HW_FEAT_AVSEL) >> 15;
+ 	/* TX and RX csum */
+-	dma_cap->tx_coe = (hw_cap & DMA_HW_FEAT_TXCOESEL) >> 16;
++//	dma_cap->tx_coe = (hw_cap & DMA_HW_FEAT_TXCOESEL) >> 16;
+ 	dma_cap->rx_coe_type1 = (hw_cap & DMA_HW_FEAT_RXTYP1COE) >> 17;
+ 	dma_cap->rx_coe_type2 = (hw_cap & DMA_HW_FEAT_RXTYP2COE) >> 18;
+ 	dma_cap->rxfifo_over_2048 = (hw_cap & DMA_HW_FEAT_RXFIFOSIZE) >> 19;
+--
+Working Copy 3.0.8
+

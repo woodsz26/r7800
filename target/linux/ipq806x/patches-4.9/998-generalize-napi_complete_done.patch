@@ -1,0 +1,35 @@
+From 6ad20165d376fa07919a70e4f43dfae564601829 Mon Sep 17 00:00:00 2001
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 30 Jan 2017 08:22:01 -0800
+Subject: drivers: net: generalize napi_complete_done()
+
+napi_complete_done() allows to opt-in for gro_flush_timeout,
+added back in linux-3.19, commit 3b47d30396ba
+("net: gro: add a per device gro flush timer")
+
+This allows for more efficient GRO aggregation without
+sacrifying latencies.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+(limited to 'drivers/net/ethernet/stmicro/stmmac/stmmac_main.c')
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 38e1fb7..26a2185 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2684,7 +2684,7 @@ static int stmmac_poll(struct napi_struct *napi, int budget)
+ 
+ 	work_done = stmmac_rx(priv, budget);
+ 	if (work_done < budget) {
+-		napi_complete(napi);
++		napi_complete_done(napi, work_done);
+ 		stmmac_enable_dma_irq(priv);
+ 	}
+ 	return work_done;
+-- 
+cgit v1.1

@@ -1,0 +1,23 @@
+From 4e8512154e3bcca38584b5f230219fe1e8eb61e2 Mon Sep 17 00:00:00 2001
+From: dissent1 <be.dissent+github@gmail.com>
+Date: Sat, 9 Sep 2017 21:03:08 +0300
+Subject: [PATCH] convert to napi_complete_done
+
+---
+ dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dma.c b/dma.c
+index ecd409a..2a768ea 100644
+--- a/dma.c
++++ b/dma.c
+@@ -394,7 +394,7 @@ mt76_dma_rx_poll(struct napi_struct *napi, int budget)
+ 
+ 	done = mt76_dma_rx_process(dev, &dev->q_rx[qid], budget);
+ 	if (done < budget) {
+-		napi_complete(napi);
++		napi_complete_done(napi, done);
+ 		dev->drv->rx_poll_complete(dev, qid);
+ 	}
+ 	mt76_rx_complete(dev, qid);
+  

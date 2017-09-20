@@ -120,7 +120,7 @@ define Device/mir3g
   DEVICE_TITLE := Xiaomi Mi Router 3G
   SUPPORTED_DEVICES += R3G
   DEVICE_PACKAGES := \
-	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport wpad \
+	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport wpad-mini \
 	kmod-softdog uboot-envtools
 endef
 TARGET_DEVICES += mir3g

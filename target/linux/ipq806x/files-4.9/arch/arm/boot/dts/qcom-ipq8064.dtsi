@@ -980,6 +980,7 @@
 				phy-names = "usb2-phy", "usb3-phy";
 				dr_mode = "host";
 				snps,dis_u3_susphy_quirk;
+				snps,xhci-stream-quirk;
 				usb3_dev_reset_quirk;
 			};
 		};
@@ -1006,6 +1007,7 @@
 				phy-names = "usb2-phy", "usb3-phy";
 				dr_mode = "host";
 				snps,dis_u3_susphy_quirk;
+				snps,xhci-stream-quirk;
 				usb3_dev_reset_quirk;
 			};
 		};

@@ -1,7 +1,7 @@
-Index: src/linux/universal/linux-4.9/drivers/nvmem/core.c
+Index: drivers/nvmem/core.c
 ===================================================================
---- src/linux/universal/linux-4.9/drivers/nvmem/core.c	(revision 32783)
-+++ src/linux/universal/linux-4.9/drivers/nvmem/core.c	(revision 33429)
+--- drivers/nvmem/core.c	(revision 32783)
++++ drivers/nvmem/core.c	(revision 33429)
 @@ -114,5 +114,5 @@
  	rc = nvmem_reg_read(nvmem, pos, buf, count);
  

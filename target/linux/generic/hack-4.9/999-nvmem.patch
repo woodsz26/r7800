@@ -1,7 +1,7 @@
 Index: drivers/nvmem/core.c
 ===================================================================
 --- drivers/nvmem/core.c
-+++ drivers/nvmem/core.c	
++++ drivers/nvmem/core.c
 @@ -114,5 +114,5 @@
  	rc = nvmem_reg_read(nvmem, pos, buf, count);
  

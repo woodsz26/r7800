@@ -1,0 +1,39 @@
+From patchwork Tue Nov 14 17:16:59 2017
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: ath10k: Fix invalid STS_CAP_OFFSET_MASK.
+From: Ben Greear <greearb@candelatech.com>
+X-Patchwork-Id: 10057945
+Message-Id: <1510679819-24115-1-git-send-email-greearb@candelatech.com>
+To: ath10k@lists.infradead.org
+Cc: Ben Greear <greearb@candelatech.com>, linux-wireless@vger.kernel.org
+Date: Tue, 14 Nov 2017 09:16:59 -0800
+
+From: Ben Greear <greearb@candelatech.com>
+
+The 10.4 firmware defines this as a 3-bit field, as does the
+mac80211 stack.  The 4th bit is defined as CONF_IMPLICIT_BF
+at least in the firmware header I have seen.  This patch
+fixes the ath10k wmi header to match the firmware.
+
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+---
+ drivers/net/wireless/ath/ath10k/wmi.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.h b/drivers/net/wireless/ath/ath10k/wmi.h
+index ff15c37..9522f22 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.h
++++ b/drivers/net/wireless/ath/ath10k/wmi.h
+@@ -5195,7 +5195,8 @@ enum wmi_10_4_vdev_param {
+ #define WMI_VDEV_PARAM_TXBF_MU_TX_BFER BIT(3)
+ 
+ #define WMI_TXBF_STS_CAP_OFFSET_LSB	4
+-#define WMI_TXBF_STS_CAP_OFFSET_MASK	0xf0
++#define WMI_TXBF_STS_CAP_OFFSET_MASK	0x70
++#define WMI_TXBF_CONF_IMPLICIT_BF       BIT(7)
+ #define WMI_BF_SOUND_DIM_OFFSET_LSB	8
+ #define WMI_BF_SOUND_DIM_OFFSET_MASK	0xf00
+ 
+ 

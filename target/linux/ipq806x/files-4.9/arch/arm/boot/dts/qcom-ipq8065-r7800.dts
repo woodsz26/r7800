@@ -7,7 +7,7 @@
 	compatible = "netgear,r7800", "qcom,ipq8065", "qcom,ipq8064";
 
 	memory@0 {
-		reg = <0x42000000 0x1de00000>;
+		reg = <0x42000000 0x1d600000>;
 		device_type = "memory";
 	};
 

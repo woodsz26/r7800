@@ -1,6 +1,6 @@
-From c4d3e6c26d3160603e742bc54919239cc80d592a Mon Sep 17 00:00:00 2001
+From aa9a47d94ad1992eb3fd9f1c2278780ed846b03c Mon Sep 17 00:00:00 2001
 From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-Date: Fri, 27 Oct 2017 11:12:42 +0300
+Date: Fri, 27 Oct 2017 18:35:31 +0300
 Subject: ath10k: rebuild crypto header in rx data frames
 
 Rx data frames notified through HTT_T2H_MSG_TYPE_RX_IND and
@@ -31,10 +31,8 @@ Patchwork-Id: 10028621
  drivers/net/wireless/ath/ath10k/rx_desc.h |   3 +
  2 files changed, 92 insertions(+), 16 deletions(-)
 
-(limited to 'drivers/net/wireless/ath/ath10k')
-
 diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
-index a3f5dc7..5beb6ee 100644
+index f068376..71d1523 100644
 --- a/drivers/net/wireless/ath/ath10k/htt_rx.c
 +++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
 @@ -550,6 +550,11 @@ static int ath10k_htt_rx_crypto_param_len(struct ath10k *ar,

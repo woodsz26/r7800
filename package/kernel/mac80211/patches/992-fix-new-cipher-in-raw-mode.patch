@@ -1,7 +1,7 @@
-From 26148b184fd0ec94074a3e7d54fe93df7d964875 Mon Sep 17 00:00:00 2001
+From f49be9d14a5a2447e5563f4112456233237ee22f Mon Sep 17 00:00:00 2001
 From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-Date: Fri, 27 Oct 2017 10:09:14 +0530
-Subject: ath10k: Fix data rx for CCMP-256, GCMP and GCMP-256 in raw mode
+Date: Fri, 27 Oct 2017 18:35:41 +0300
+Subject: ath10k: fix data rx for CCMP-256, GCMP and GCMP-256 in raw mode
 
 Make sure 16-byte mic is removed from the rx data packet
 tail when CCMP-256, GCMP and GCMP-256 ciphers are used
@@ -18,10 +18,8 @@ Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
  drivers/net/wireless/ath/ath10k/htt_rx.c | 51 ++++++++++++++++++++++++--------
  1 file changed, 38 insertions(+), 13 deletions(-)
 
-(limited to 'drivers/net/wireless/ath/ath10k')
-
 diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
-index 5beb6ee..656385f 100644
+index 71d1523..3b046d0 100644
 --- a/drivers/net/wireless/ath/ath10k/htt_rx.c
 +++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
 @@ -566,18 +566,16 @@ static int ath10k_htt_rx_crypto_param_len(struct ath10k *ar,

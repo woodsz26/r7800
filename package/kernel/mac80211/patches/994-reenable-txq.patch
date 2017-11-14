@@ -1,0 +1,48 @@
+From f2d59324f6a1e9065d61b2912cc0c599105f5f1c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+Date: Fri, 10 Nov 2017 09:48:39 +0900
+Subject: ath10k: Re-enable TXQs for all devices
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit 4ca1807815aa6801aaced7fdefa9edacc2521767 disables the use of the
+mac80211 TXQs for some devices because of a theoretical throughput
+regression. The original regression report[1] was related to fq_codel
+qdisc drop performance, which was fixed in
+9d18562a227874289fda8ca5d117d8f503f1dcca. Since then, we have not seen
+the TXQ-related regression, so it should be safe to re-enable TXQs.
+
+[1] http://lists.infradead.org/pipermail/ath10k/2016-April/007266.html
+
+Signed-off-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Patchwork-Id: 10052197
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+---
+ drivers/net/wireless/ath/ath10k/mac.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+(limited to 'drivers/net/wireless/ath/ath10k')
+
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 0a947ee..ca596ec 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -8329,15 +8329,6 @@ int ath10k_mac_register(struct ath10k *ar)
+ 			ath10k_warn(ar, "failed to initialise DFS pattern detector\n");
+ 	}
+ 
+-	/* Current wake_tx_queue implementation imposes a significant
+-	 * performance penalty in some setups. The tx scheduling code needs
+-	 * more work anyway so disable the wake_tx_queue unless firmware
+-	 * supports the pull-push mechanism.
+-	 */
+-	if (!test_bit(ATH10K_FW_FEATURE_PEER_FLOW_CONTROL,
+-		      ar->running_fw->fw_file.fw_features))
+-		ar->ops->wake_tx_queue = NULL;
+-
+ 	ret = ath10k_mac_init_rd(ar);
+ 	if (ret) {
+ 		ath10k_err(ar, "failed to derive regdom: %d\n", ret);
+-- 
+cgit v1.1

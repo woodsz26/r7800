@@ -57,7 +57,7 @@ define KernelPackage/fast-classifier
   TITLE:=Kernel driver for FAST Classifier
   FILES:=$(PKG_BUILD_DIR)/fast-classifier.ko
   KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y CONFIG_NF_CONNTRACK_MARK=y
-  AUTOLOAD:=$(call AutoLoad,z,fast-classifier)
+  AUTOLOAD:=$(call AutoProbe,fast-classifier)
   PROVIDES:=$(PKG_NAME)
 endef
 

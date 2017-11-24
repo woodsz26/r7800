@@ -125,7 +125,8 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6@eth0"
 		;;
-	mir3g)
+	mir3g|\
+	mir3g-nor)
 		ucidef_add_switch "switch0" \
 			"2:lan:2" "3:lan:1" "1:wan" "6t@eth0"
 		;;
@@ -438,7 +439,8 @@ ramips_setup_macs()
 		lan_mac=$(mtd_get_mac_binary factory_info 13)
 		wan_mac=$(macaddr_add "$lan_mac" 1)
 		;;
-	mir3g)
+	mir3g|\
+	mir3g-nor)
 		lan_mac=$(mtd_get_mac_binary Factory 0xe006)
 		;;
 	miwifi-mini)

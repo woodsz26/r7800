@@ -9,9 +9,11 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  include/linux/cpufreq.h      |  2 ++
  2 files changed, 42 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 251aa24..f30085d 100644
 --- a/drivers/cpufreq/cpufreq-dt.c
 +++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -48,11 +48,41 @@ static int set_target(struct cpufreq_pol
+@@ -48,11 +48,41 @@ static int set_target(struct cpufreq_policy *policy, unsigned int index)
  	struct private_data *priv = policy->driver_data;
  	int ret;
  	unsigned long target_freq = policy->freq_table[index].frequency * 1000;
@@ -54,18 +56,18 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	mutex_unlock(&priv->lock);
  
  	return ret;
-@@ -197,6 +227,8 @@ static int cpufreq_init(struct cpufreq_p
+@@ -195,6 +225,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	bool fallback = false;
  	const char *name;
  	int ret;
- 	struct srcu_notifier_head *opp_srcu_head;
 +	struct device_node *l2_np;
 +	struct clk *l2_clk = NULL;
  
  	cpu_dev = get_cpu_device(policy->cpu);
  	if (!cpu_dev) {
-@@ -321,6 +353,13 @@ static int cpufreq_init(struct cpufreq_p
- 		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
- 	rcu_read_unlock();
+@@ -304,6 +336,13 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 
+ 	policy->suspend_freq = dev_pm_opp_get_suspend_opp_freq(cpu_dev) / 1000;
  
 +	l2_clk = clk_get(cpu_dev, "l2");
 +	if (!IS_ERR(l2_clk))
@@ -88,3 +90,4 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	struct cpufreq_cpuinfo	cpuinfo;/* see above */
  
  	unsigned int		min;    /* in kHz */
+  

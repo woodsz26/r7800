@@ -1,8 +1,7 @@
-From d06ca5e7a3cf726f5be5ffd96e93ccd798b8c09a Mon Sep 17 00:00:00 2001
+From 65c091f3d3bf351691a429684c9e9197f7930027 Mon Sep 17 00:00:00 2001
 From: Georgi Djakov <georgi.djakov@linaro.org>
 Date: Thu, 12 May 2016 14:41:33 +0300
-Subject: [PATCH 51/69] PM / OPP: Add a helper to get an opp regulator for
- device
+Subject: PM / OPP: Add a helper to get an opp regulator for device
 
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
@@ -10,9 +9,11 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  include/linux/pm_opp.h        |  1 +
  2 files changed, 22 insertions(+)
 
+diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
+index 54315d8..a3b37af 100644
 --- a/drivers/base/power/opp/core.c
 +++ b/drivers/base/power/opp/core.c
-@@ -151,6 +151,27 @@ unsigned long dev_pm_opp_get_freq(struct
+@@ -126,6 +126,27 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
  }
  EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
  
@@ -29,7 +30,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 +		return ERR_CAST(opp_table);
 +	}
 +
-+	reg = opp_table->regulator;
++	reg = opp_table->regulators[0];
 +
 +	rcu_read_unlock();
 +
@@ -40,9 +41,11 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  /**
   * dev_pm_opp_is_turbo() - Returns if opp is turbo OPP or not
   * @opp: opp for which turbo mode is being verified
+diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+index f4a4e99..d8ee674 100644
 --- a/include/linux/pm_opp.h
 +++ b/include/linux/pm_opp.h
-@@ -31,6 +31,7 @@ enum dev_pm_opp_event {
+@@ -85,6 +85,7 @@ void dev_pm_opp_put_opp_table(struct opp_table *opp_table);
  unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp);
  
  unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp);
@@ -50,3 +53,5 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  
  bool dev_pm_opp_is_turbo(struct dev_pm_opp *opp);
  
+-- 
+cgit 

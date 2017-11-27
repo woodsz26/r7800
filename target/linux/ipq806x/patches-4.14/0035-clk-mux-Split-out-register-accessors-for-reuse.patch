@@ -154,7 +154,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	struct clk_hw *hw;
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -466,7 +466,7 @@ void clk_hw_unregister_divider(struct cl
+@@ -468,7 +468,7 @@ void clk_hw_unregister_divider(struct cl
  struct clk_mux {
  	struct clk_hw	hw;
  	void __iomem	*reg;
@@ -163,7 +163,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	u32		mask;
  	u8		shift;
  	u8		flags;
-@@ -484,6 +484,11 @@ struct clk_mux {
+@@ -486,6 +486,11 @@ struct clk_mux {
  extern const struct clk_ops clk_mux_ops;
  extern const struct clk_ops clk_mux_ro_ops;
  
@@ -175,7 +175,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  struct clk *clk_register_mux(struct device *dev, const char *name,
  		const char * const *parent_names, u8 num_parents,
  		unsigned long flags,
-@@ -499,12 +504,12 @@ struct clk *clk_register_mux_table(struc
+@@ -501,12 +506,12 @@ struct clk *clk_register_mux_table(struc
  		const char * const *parent_names, u8 num_parents,
  		unsigned long flags,
  		void __iomem *reg, u8 shift, u32 mask,

@@ -36,7 +36,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	struct clk_core		*new_parent;
  	struct clk_core		*new_child;
  	unsigned long		flags;
-@@ -1310,7 +1314,9 @@ out:
+@@ -1312,7 +1316,9 @@ out:
  static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
  			     struct clk_core *new_parent, u8 p_index)
  {
@@ -47,7 +47,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  
  	core->new_rate = new_rate;
  	core->new_parent = new_parent;
-@@ -1320,6 +1326,23 @@ static void clk_calc_subtree(struct clk_
+@@ -1322,6 +1328,23 @@ static void clk_calc_subtree(struct clk_
  	if (new_parent && new_parent != core->parent)
  		new_parent->new_child = core;
  
@@ -71,7 +71,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	hlist_for_each_entry(child, &core->children, child_node) {
  		child->new_rate = clk_recalc(child, new_rate);
  		clk_calc_subtree(child, child->new_rate, NULL, 0);
-@@ -1432,14 +1455,51 @@ static struct clk_core *clk_propagate_ra
+@@ -1434,14 +1457,51 @@ static struct clk_core *clk_propagate_ra
  						  unsigned long event)
  {
  	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
@@ -126,7 +126,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  			fail_clk = core;
  	}
  
-@@ -1495,7 +1555,8 @@ clk_change_rate(struct clk_core *core, u
+@@ -1497,7 +1557,8 @@ clk_change_rate(struct clk_core *core, u
  		clk_enable_unlock(flags);
  	}
  
@@ -136,7 +136,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  		old_parent = __clk_set_parent_before(core, core->new_parent);
  		trace_clk_set_parent(core, core->new_parent);
  
-@@ -1601,6 +1662,8 @@ static int clk_core_set_rate_nolock(stru
+@@ -1603,6 +1664,8 @@ static int clk_core_set_rate_nolock(stru
  
  	core->req_rate = req_rate;
  

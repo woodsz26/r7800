@@ -1,7 +1,7 @@
-From 10577f74c35bd395951d1b2382c8d821089b5745 Mon Sep 17 00:00:00 2001
+From 5b323dd7dc2ed791a077fbe8b51d332f2271839b Mon Sep 17 00:00:00 2001
 From: Stephen Boyd <sboyd@codeaurora.org>
 Date: Fri, 18 Sep 2015 17:52:08 -0700
-Subject: [PATCH 54/69] cpufreq-dt: Handle OPP voltage adjust events
+Subject: cpufreq-dt: Handle OPP voltage adjust events
 
 On some SoCs the Adaptive Voltage Scaling (AVS) technique is
 employed to optimize the operating voltage of a device. At a
@@ -23,6 +23,8 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  drivers/cpufreq/cpufreq-dt.c | 68 ++++++++++++++++++++++++++++++++++++++++++--
  1 file changed, 65 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index d83ab94..ee3b1eb 100644
 --- a/drivers/cpufreq/cpufreq-dt.c
 +++ b/drivers/cpufreq/cpufreq-dt.c
 @@ -32,6 +32,9 @@ struct private_data {
@@ -35,7 +37,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  };
  
  static struct freq_attr *cpufreq_dt_attr[] = {
-@@ -43,9 +46,16 @@ static struct freq_attr *cpufreq_dt_attr
+@@ -43,9 +46,16 @@ static struct freq_attr *cpufreq_dt_attr[] = {
  static int set_target(struct cpufreq_policy *policy, unsigned int index)
  {
  	struct private_data *priv = policy->driver_data;
@@ -94,7 +96,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  static int resources_available(void)
  {
  	struct device *cpu_dev;
-@@ -153,6 +196,7 @@ static int cpufreq_init(struct cpufreq_p
+@@ -152,6 +195,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
  	bool fallback = false;
  	const char *name;
  	int ret;
@@ -102,7 +104,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  
  	cpu_dev = get_cpu_device(policy->cpu);
  	if (!cpu_dev) {
-@@ -242,13 +286,29 @@ static int cpufreq_init(struct cpufreq_p
+@@ -238,13 +282,29 @@ static int cpufreq_init(struct cpufreq_policy *policy)
  		goto out_free_opp;
  	}
  
@@ -133,7 +135,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  	}
  
  	priv->cpu_dev = cpu_dev;
-@@ -287,6 +347,8 @@ static int cpufreq_init(struct cpufreq_p
+@@ -280,6 +340,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
  
  out_free_cpufreq_table:
  	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
@@ -142,3 +144,5 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  out_free_priv:
  	kfree(priv);
  out_free_opp:
+-- 
+cgit 

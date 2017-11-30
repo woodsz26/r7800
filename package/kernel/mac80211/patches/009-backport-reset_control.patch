@@ -1,0 +1,15 @@
+--- /dev/null
++++ b/backport-include/linux/reset.h
+@@ -0,0 +1,12 @@
++#ifndef __COMPAT_RESET_H
++#define __COMPAT_RESET_H
++
++#include_next <linux/reset.h>
++
++#if LINUX_VERSION_IS_LESS(4,7,0)
++
++#define devm_reset_control_get_exclusive devm_reset_control_get
++
++#endif /* LINUX_VERSION_IS_LESS(4,7,0) */
++
++#endif

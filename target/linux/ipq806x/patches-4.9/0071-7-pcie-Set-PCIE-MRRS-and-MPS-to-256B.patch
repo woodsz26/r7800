@@ -14,11 +14,9 @@ Signed-off-by: Gokul Sriram Palanisamy <gpalan@codeaurora.org>
 
 (limited to 'drivers/pci/host/pcie-qcom.c')
 
-diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
-index fe8e86f..bc6b3c2 100644
 --- a/drivers/pci/host/pcie-qcom.c
 +++ b/drivers/pci/host/pcie-qcom.c
-@@ -115,6 +115,14 @@
+@@ -92,6 +92,14 @@
  
  #define PCIE20_LNK_CONTROL2_LINK_STATUS2        0xA0
  
@@ -33,7 +31,7 @@ index fe8e86f..bc6b3c2 100644
  struct qcom_pcie_resources_v0 {
  	struct clk *iface_clk;
  	struct clk *core_clk;
-@@ -1398,6 +1406,35 @@ static int qcom_pcie_remove(struct platform_device *pdev)
+@@ -745,6 +753,35 @@ static int qcom_pcie_probe(struct platfo
  	return 0;
  }
  
@@ -69,5 +67,3 @@ index fe8e86f..bc6b3c2 100644
  static const struct of_device_id qcom_pcie_match[] = {
  	{ .compatible = "qcom,pcie-ipq8064", .data = &ops_v0 },
  	{ .compatible = "qcom,pcie-apq8064", .data = &ops_v0 },
--- 
-cgit v1.1

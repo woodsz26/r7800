@@ -11,11 +11,9 @@ Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
  drivers/pci/host/pcie-qcom.c       | 5 +++--
  3 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-index d1f1014..4d42063 100644
 --- a/drivers/pci/host/pcie-designware.c
 +++ b/drivers/pci/host/pcie-designware.c
-@@ -533,8 +533,13 @@ int dw_pcie_host_init(struct pcie_port *pp)
+@@ -637,8 +637,13 @@ int dw_pcie_host_init(struct pcie_port *
  		}
  	}
  
@@ -29,13 +27,11 @@ index d1f1014..4d42063 100644
 +		}
 +	}
  
- 	if (!pp->ops->rd_other_conf)
- 		dw_pcie_prog_outbound_atu(pp, PCIE_ATU_REGION_INDEX1,
-diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
-index f437f9b..88ff550 100644
+ 	pp->root_bus_nr = pp->busn->start;
+ 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
 --- a/drivers/pci/host/pcie-designware.h
 +++ b/drivers/pci/host/pcie-designware.h
-@@ -68,7 +68,7 @@ struct pcie_host_ops {
+@@ -63,7 +63,7 @@ struct pcie_host_ops {
  	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
  			unsigned int devfn, int where, int size, u32 val);
  	int (*link_up)(struct pcie_port *pp);
@@ -44,11 +40,9 @@ index f437f9b..88ff550 100644
  	void (*msi_set_irq)(struct pcie_port *pp, int irq);
  	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
  	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
-diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
-index a9d5846..6fe284d 100644
 --- a/drivers/pci/host/pcie-qcom.c
 +++ b/drivers/pci/host/pcie-qcom.c
-@@ -513,7 +513,7 @@ static int qcom_pcie_link_up(struct pcie_port *pp)
+@@ -515,7 +515,7 @@ static int qcom_pcie_link_up(struct pcie
  	return !!(val & PCI_EXP_LNKSTA_DLLLA);
  }
  
@@ -57,7 +51,7 @@ index a9d5846..6fe284d 100644
  {
  	struct qcom_pcie *pcie = to_qcom_pcie(pp);
  	int ret;
-@@ -539,12 +539,13 @@ static void qcom_pcie_host_init(struct pcie_port *pp)
+@@ -541,12 +541,13 @@ static void qcom_pcie_host_init(struct p
  	if (ret)
  		goto err;
  
@@ -72,5 +66,3 @@ index a9d5846..6fe284d 100644
  }
  
  static int qcom_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
--- 
-cgit v1.1

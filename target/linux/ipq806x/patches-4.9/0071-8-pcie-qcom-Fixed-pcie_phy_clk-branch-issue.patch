@@ -36,11 +36,9 @@ Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
  drivers/pci/host/pcie-qcom.c | 16 +++++++---------
  1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
-index bc6b3c2..0b59901 100644
 --- a/drivers/pci/host/pcie-qcom.c
 +++ b/drivers/pci/host/pcie-qcom.c
-@@ -561,6 +561,7 @@ static void qcom_pcie_deinit_v0(struct qcom_pcie *pcie)
+@@ -352,6 +352,7 @@ static void qcom_pcie_deinit_v0(struct q
  {
  	struct qcom_pcie_resources_v0 *res = &pcie->res.v0;
  
@@ -48,7 +46,7 @@ index bc6b3c2..0b59901 100644
  	reset_control_assert(res->pci_reset);
  	reset_control_assert(res->axi_reset);
  	reset_control_assert(res->ahb_reset);
-@@ -569,7 +570,6 @@ static void qcom_pcie_deinit_v0(struct qcom_pcie *pcie)
+@@ -360,7 +361,6 @@ static void qcom_pcie_deinit_v0(struct q
  	reset_control_assert(res->ext_reset);
  	clk_disable_unprepare(res->iface_clk);
  	clk_disable_unprepare(res->core_clk);
@@ -56,7 +54,7 @@ index bc6b3c2..0b59901 100644
  	clk_disable_unprepare(res->aux_clk);
  	clk_disable_unprepare(res->ref_clk);
  	regulator_disable(res->vdda);
-@@ -625,12 +625,6 @@ static int qcom_pcie_init_v0(struct qcom_pcie *pcie)
+@@ -416,12 +416,6 @@ static int qcom_pcie_init_v0(struct qcom
  		goto err_clk_core;
  	}
  
@@ -69,7 +67,7 @@ index bc6b3c2..0b59901 100644
  	ret = clk_prepare_enable(res->aux_clk);
  	if (ret) {
  		dev_err(dev, "cannot prepare/enable aux clock\n");
-@@ -695,6 +689,12 @@ static int qcom_pcie_init_v0(struct qcom_pcie *pcie)
+@@ -486,6 +480,12 @@ static int qcom_pcie_init_v0(struct qcom
  		return ret;
  	}
  
@@ -82,7 +80,7 @@ index bc6b3c2..0b59901 100644
  	/* wait for clock acquisition */
  	usleep_range(1000, 1500);
  	if (pcie->force_gen1) {
-@@ -713,8 +713,6 @@ err_deassert_ahb:
+@@ -504,8 +504,6 @@ err_deassert_ahb:
  err_clk_ref:
  	clk_disable_unprepare(res->aux_clk);
  err_clk_aux:
@@ -91,5 +89,3 @@ index bc6b3c2..0b59901 100644
  	clk_disable_unprepare(res->core_clk);
  err_clk_core:
  	clk_disable_unprepare(res->iface_clk);
--- 
-cgit v1.1

@@ -9,11 +9,9 @@ Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
  drivers/pci/host/pcie-qcom.c | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
-diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
-index d5b5b2c..4d79a81 100644
 --- a/drivers/pci/host/pcie-qcom.c
 +++ b/drivers/pci/host/pcie-qcom.c
-@@ -113,6 +113,8 @@
+@@ -90,6 +90,8 @@
  #define PCIE20_PARF_CONFIG_BITS			0x50
  #define PHY_RX0_EQ(x)				(x << 24)
  
@@ -22,7 +20,7 @@ index d5b5b2c..4d79a81 100644
  struct qcom_pcie_resources_v0 {
  	struct clk *iface_clk;
  	struct clk *core_clk;
-@@ -202,6 +204,7 @@ struct qcom_pcie {
+@@ -138,6 +140,7 @@ struct qcom_pcie {
  	struct phy *phy;
  	struct gpio_desc *reset;
  	struct qcom_pcie_ops *ops;
@@ -30,7 +28,7 @@ index d5b5b2c..4d79a81 100644
  };
  
  #define to_qcom_pcie(x)		container_of(x, struct qcom_pcie, pp)
-@@ -681,6 +684,11 @@ static int qcom_pcie_init_v0(struct qcom_pcie *pcie)
+@@ -477,6 +480,11 @@ static int qcom_pcie_init_v0(struct qcom
  
  	/* wait for clock acquisition */
  	usleep_range(1000, 1500);
@@ -42,7 +40,7 @@ index d5b5b2c..4d79a81 100644
  
  	qcom_pcie_prog_viewport_cfg0(pcie, MSM_PCIE_DEV_CFG_ADDR);
  	qcom_pcie_prog_viewport_mem2_outbound(pcie);
-@@ -1196,6 +1204,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+@@ -666,6 +674,8 @@ static int qcom_pcie_probe(struct platfo
  	struct qcom_pcie *pcie;
  	struct pcie_port *pp;
  	int ret;
@@ -51,7 +49,7 @@ index d5b5b2c..4d79a81 100644
  
  	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
  	if (!pcie)
-@@ -1208,6 +1218,9 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+@@ -678,6 +688,9 @@ static int qcom_pcie_probe(struct platfo
  	if (IS_ERR(pcie->reset))
  		return PTR_ERR(pcie->reset);
  
@@ -61,5 +59,3 @@ index d5b5b2c..4d79a81 100644
  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "parf");
  	pcie->parf = devm_ioremap_resource(dev, res);
  	if (IS_ERR(pcie->parf))
--- 
-cgit v1.1

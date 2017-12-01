@@ -12,11 +12,9 @@ Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
  drivers/pci/host/pcie-qcom.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
-index 0b59901..f67661b 100644
 --- a/drivers/pci/host/pcie-qcom.c
 +++ b/drivers/pci/host/pcie-qcom.c
-@@ -562,7 +562,7 @@ static void qcom_pcie_deinit_v0(struct qcom_pcie *pcie)
+@@ -353,7 +353,7 @@ static void qcom_pcie_deinit_v0(struct q
  	struct qcom_pcie_resources_v0 *res = &pcie->res.v0;
  
  	clk_disable_unprepare(res->phy_clk);
@@ -25,5 +23,3 @@ index 0b59901..f67661b 100644
  	reset_control_assert(res->axi_reset);
  	reset_control_assert(res->ahb_reset);
  	reset_control_assert(res->por_reset);
--- 
-cgit v1.1

@@ -1,0 +1,147 @@
+From 7a2dd61ca0ce332c0f308c555e3aaf2c9ad10aa1 Mon Sep 17 00:00:00 2001
+From: Pavel Kubelun <be.dissent@gmail.com>
+Date: Mon, 4 Dec 2017 12:11:56 -0500
+Subject: [PATCH 3/3] Revert "mt76x2: add channel argument to eeprom tx power
+ functions"
+
+This reverts commit 11f42a8aab40a6c3f80ffc0ec9d70a8a9153a969.
+---
+ mt76x2_eeprom.c | 30 ++++++++++++------------------
+ mt76x2_eeprom.h |  6 ++----
+ mt76x2_phy.c    |  7 +++----
+ 3 files changed, 17 insertions(+), 26 deletions(-)
+
+diff --git a/mt76x2_eeprom.c b/mt76x2_eeprom.c
+index 79bc163..440b7e7 100644
+--- a/mt76x2_eeprom.c
++++ b/mt76x2_eeprom.c
+@@ -425,13 +425,12 @@ mt76x2_rate_power_val(u8 val)
+ 	return mt76x2_sign_extend_optional(val, 7);
+ }
+ 
+-void mt76x2_get_rate_power(struct mt76x2_dev *dev, struct mt76_rate_power *t,
+-			   struct ieee80211_channel *chan)
++void mt76x2_get_rate_power(struct mt76x2_dev *dev, struct mt76_rate_power *t)
+ {
+ 	bool is_5ghz;
+ 	u16 val;
+ 
+-	is_5ghz = chan->band == NL80211_BAND_5GHZ;
++	is_5ghz = dev->mt76.chandef.chan->band == NL80211_BAND_5GHZ;
+ 
+ 	memset(t, 0, sizeof(*t));
+ 
+@@ -485,9 +484,9 @@ void mt76x2_get_rate_power(struct mt76x2_dev *dev, struct mt76_rate_power *t,
+ 
+ static void
+ mt76x2_get_power_info_2g(struct mt76x2_dev *dev, struct mt76x2_tx_power_info *t,
+-		         struct ieee80211_channel *chan, int chain, int offset)
++		       int chain, int offset)
+ {
+-	int channel = chan->hw_value;
++	int channel = dev->mt76.chandef.chan->hw_value;
+ 	int delta_idx;
+ 	u8 data[6];
+ 	u16 val;
+@@ -512,9 +511,9 @@ mt76x2_get_power_info_2g(struct mt76x2_dev *dev, struct mt76x2_tx_power_info *t,
+ 
+ static void
+ mt76x2_get_power_info_5g(struct mt76x2_dev *dev, struct mt76x2_tx_power_info *t,
+-		         struct ieee80211_channel *chan, int chain, int offset)
++		       int chain, int offset)
+ {
+-	int channel = chan->hw_value;
++	int channel = dev->mt76.chandef.chan->hw_value;
+ 	enum mt76x2_cal_channel_group group;
+ 	int delta_idx;
+ 	u16 val;
+@@ -560,8 +559,7 @@ mt76x2_get_power_info_5g(struct mt76x2_dev *dev, struct mt76x2_tx_power_info *t,
+ }
+ 
+ void mt76x2_get_power_info(struct mt76x2_dev *dev,
+-			   struct mt76x2_tx_power_info *t,
+-			   struct ieee80211_channel *chan)
++			   struct mt76x2_tx_power_info *t)
+ {
+ 	u16 bw40, bw80;
+ 
+@@ -570,17 +568,13 @@ void mt76x2_get_power_info(struct mt76x2_dev *dev,
+ 	bw40 = mt76x2_eeprom_get(dev, MT_EE_TX_POWER_DELTA_BW40);
+ 	bw80 = mt76x2_eeprom_get(dev, MT_EE_TX_POWER_DELTA_BW80);
+ 
+-	if (chan->band == NL80211_BAND_5GHZ) {
++	if (dev->mt76.chandef.chan->band == NL80211_BAND_5GHZ) {
+ 		bw40 >>= 8;
+-		mt76x2_get_power_info_5g(dev, t, chan, 0,
+-					 MT_EE_TX_POWER_0_START_5G);
+-		mt76x2_get_power_info_5g(dev, t, chan, 1,
+-					 MT_EE_TX_POWER_1_START_5G);
++		mt76x2_get_power_info_5g(dev, t, 0, MT_EE_TX_POWER_0_START_5G);
++		mt76x2_get_power_info_5g(dev, t, 1, MT_EE_TX_POWER_1_START_5G);
+ 	} else {
+-		mt76x2_get_power_info_2g(dev, t, chan, 0,
+-					 MT_EE_TX_POWER_0_START_2G);
+-		mt76x2_get_power_info_2g(dev, t, chan, 1,
+-					 MT_EE_TX_POWER_1_START_2G);
++		mt76x2_get_power_info_2g(dev, t, 0, MT_EE_TX_POWER_0_START_2G);
++		mt76x2_get_power_info_2g(dev, t, 1, MT_EE_TX_POWER_1_START_2G);
+ 	}
+ 
+ 	if (mt76x2_tssi_enabled(dev) || !field_valid(t->target_power))
+diff --git a/mt76x2_eeprom.h b/mt76x2_eeprom.h
+index 6db2c6e..063d6c8 100644
+--- a/mt76x2_eeprom.h
++++ b/mt76x2_eeprom.h
+@@ -146,11 +146,9 @@ mt76x2_eeprom_get(struct mt76x2_dev *dev, enum mt76x2_eeprom_field field)
+ 	return get_unaligned_le16(dev->mt76.eeprom.data + field);
+ }
+ 
+-void mt76x2_get_rate_power(struct mt76x2_dev *dev, struct mt76_rate_power *t,
+-			   struct ieee80211_channel *chan);
++void mt76x2_get_rate_power(struct mt76x2_dev *dev, struct mt76_rate_power *t);
+ void mt76x2_get_power_info(struct mt76x2_dev *dev,
+-			   struct mt76x2_tx_power_info *t,
+-			   struct ieee80211_channel *chan);
++			   struct mt76x2_tx_power_info *t);
+ int mt76x2_get_temp_comp(struct mt76x2_dev *dev, struct mt76x2_temp_comp *t);
+ bool mt76x2_ext_pa_enabled(struct mt76x2_dev *dev, enum nl80211_band band);
+ void mt76x2_read_rx_gain(struct mt76x2_dev *dev);
+diff --git a/mt76x2_phy.c b/mt76x2_phy.c
+index 81cea7e..fe3a4b6 100644
+--- a/mt76x2_phy.c
++++ b/mt76x2_phy.c
+@@ -117,12 +117,11 @@ mt76x2_get_max_power(struct mt76_rate_power *r)
+ void mt76x2_phy_set_txpower(struct mt76x2_dev *dev)
+ {
+ 	enum nl80211_chan_width width = dev->mt76.chandef.width;
+-	struct ieee80211_channel *chan = dev->mt76.chandef.chan;
+ 	struct mt76x2_tx_power_info txp;
+ 	int txp_0, txp_1, delta = 0;
+ 	struct mt76_rate_power t = {};
+ 
+-	mt76x2_get_power_info(dev, &txp, chan);
++	mt76x2_get_power_info(dev, &txp);
+ 
+ 	if (width == NL80211_CHAN_WIDTH_40)
+ 		delta = txp.delta_bw40;
+@@ -132,7 +131,7 @@ void mt76x2_phy_set_txpower(struct mt76x2_dev *dev)
+ 	if (txp.target_power > dev->txpower_conf)
+ 		delta -= txp.target_power - dev->txpower_conf;
+ 
+-	mt76x2_get_rate_power(dev, &t, chan);
++	mt76x2_get_rate_power(dev, &t);
+ 	mt76x2_add_rate_power_offset(&t, txp.chain[0].target_power +
+ 				   txp.chain[0].delta);
+ 	mt76x2_limit_rate_power(&t, dev->txpower_conf);
+@@ -676,7 +675,7 @@ mt76x2_phy_tssi_compensate(struct mt76x2_dev *dev)
+ 			return;
+ 
+ 		dev->cal.tssi_comp_pending = false;
+-		mt76x2_get_power_info(dev, &txp, chan);
++		mt76x2_get_power_info(dev, &txp);
+ 
+ 		if (mt76x2_ext_pa_enabled(dev, chan->band))
+ 			t.pa_mode = 1;
+-- 
+2.7.4
+

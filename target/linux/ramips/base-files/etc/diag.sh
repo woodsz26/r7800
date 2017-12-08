@@ -184,8 +184,7 @@ get_status_led() {
 	m4-8M)
 		status_led="m4:blue:status"
 		;;
-	mir3g|\
-	mir3g-nor)
+	mir3g)
 		status_led="$board:yellow:status"
 		;;
 	miwifi-mini|\

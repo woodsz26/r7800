@@ -286,9 +286,6 @@ ramips_board_detect() {
 	*"Mi Router 3G")
 		name="mir3g"
 		;;
-	*"Mi Router 3G NOR")
-		name="mir3g-nor"
-		;;
 	*"MicroWRT")
 		name="microwrt"
 		;;

@@ -43,7 +43,9 @@ diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
 index e5ad070..c8e1986 100644
 --- a/arch/arm/common/Kconfig
 +++ b/arch/arm/common/Kconfig
-@@ -7,6 +7,9 @@ config DMABOUNCE
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -9,6 +9,9 @@ config DMABOUNCE
  	bool
  	select ZONE_DMA
  
@@ -52,13 +54,13 @@ index e5ad070..c8e1986 100644
 +
  config SHARP_LOCOMO
  	bool
- 
+  
 diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
 index 70b4a14..eec6cd1 100644
 --- a/arch/arm/common/Makefile
 +++ b/arch/arm/common/Makefile
 @@ -7,6 +7,7 @@ obj-y				+= firmware.o
- 
+ obj-$(CONFIG_ICST)		+= icst.o
  obj-$(CONFIG_SA1111)		+= sa1111.o
  obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
 +obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o

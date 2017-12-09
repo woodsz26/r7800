@@ -305,6 +305,10 @@
 #define AR8327_REG_ROUTE_EG_MODE                0xc80
 #define   AR8327_ROUTE_EG_MODE_S(_i)            ((_i) * 4)
 
+#define AR8327_REG_NAT_CTRL	0xe38
+#define   AR8327_HNAPT_EN	BIT(0)
+#define   AR8327_HNAT_EN	BIT(1)
+
 enum ar8327_led_pattern {
 	AR8327_LED_PATTERN_OFF = 0,
 	AR8327_LED_PATTERN_BLINK,

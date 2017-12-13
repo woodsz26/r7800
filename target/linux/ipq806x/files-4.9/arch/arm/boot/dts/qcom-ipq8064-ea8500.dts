@@ -40,7 +40,7 @@
 	soc {
 		pinmux@800000 {
 
-			pinctrl-0 = <&reset-control>;
+			pinctrl-0 = <&ps_hold>;
 			pinctrl-names = "default";
 
 			button_pins: button_pins {
@@ -70,10 +70,10 @@
 				};
 			};
 
-			reset-control: reset_control_pins {
+			ps_hold: ps_hold {
 				mux {
 					pins = "gpio63";
-					function = "gpio";
+					function = "ps_hold";
 					drive-strength = <2>;
 					bias-disable;
 					output-low;

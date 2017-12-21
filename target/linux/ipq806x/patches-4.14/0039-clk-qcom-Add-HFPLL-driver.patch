@@ -1,7 +1,19 @@
-From 23f680d03e5894f494572a5162d21328bd86890c Mon Sep 17 00:00:00 2001
+From patchwork Fri Dec  8 09:42:22 2017
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: [v4,04/12] clk: qcom: Add HFPLL driver
+From: Sricharan R <sricharan@codeaurora.org>
+X-Patchwork-Id: 10102079
+Message-Id: <1512726150-7204-5-git-send-email-sricharan@codeaurora.org>
+To: mturquette@baylibre.com, sboyd@codeaurora.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org
+Date: Fri,  8 Dec 2017 15:12:22 +0530
+
 From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Fri, 20 Mar 2015 23:45:25 -0700
-Subject: [PATCH 39/69] clk: qcom: Add HFPLL driver
 
 On some devices (MSM8974 for example), the HFPLLs are
 instantiated within the Krait processor subsystem as separate
@@ -10,7 +22,6 @@ provide HFPLL clocks for use by the system.
 
 Cc: <devicetree@vger.kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
  .../devicetree/bindings/clock/qcom,hfpll.txt       |  40 ++++++++
  drivers/clk/qcom/Kconfig                           |   8 ++
@@ -65,7 +76,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 +	};
 --- a/drivers/clk/qcom/Kconfig
 +++ b/drivers/clk/qcom/Kconfig
-@@ -196,3 +196,11 @@ config MSM_MMCC_8996
+@@ -179,3 +179,11 @@ config MSM_MMCC_8996
  	  Support for the multimedia clock controller on msm8996 devices.
  	  Say Y if you want to support multimedia devices such as display,
  	  graphics, video encode/decode, camera, etc.
@@ -79,7 +90,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 +	  such as MSM8974, APQ8084, etc.
 --- a/drivers/clk/qcom/Makefile
 +++ b/drivers/clk/qcom/Makefile
-@@ -35,3 +35,4 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8
+@@ -32,3 +32,4 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8
  obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
  obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
@@ -171,7 +182,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 +		return PTR_ERR(regmap);
 +
 +	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+						  0, &init.name))
++					  0, &init.name))
 +		return -ENODEV;
 +
 +	h->d = &hdata;

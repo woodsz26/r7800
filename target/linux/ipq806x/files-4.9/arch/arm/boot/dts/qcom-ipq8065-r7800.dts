@@ -20,8 +20,15 @@
 			no-map;
 		};
 
-		rsvd@5fe00000 {
-			reg = <0x5fe00000 0x200000>;
+		/* scm firmware reserve */
+		rsvd@44600000 {
+			reg = <0x44600000 0x200000>;
+			reusable;
+		};
+
+		/* u-boot memory pool */
+		rsvd@5fc00000 {
+			reg = <0x5fc00000 0x400000>;
 			reusable;
 		};
 	};

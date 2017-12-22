@@ -6,12 +6,14 @@ Subject: PCI: qcom: Fixed IPQ806x PCIE reset changes
 Change-Id: Ia6590e960b9754b1e8b7a51f318788cd63e9e321
 Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
 ---
- drivers/pci/host/pcie-qcom.c | 24 +++++++++++++++++++-----
+ drivers/pci/dwc/pcie-qcom.c | 24 +++++++++++++++++++-----
  1 file changed, 19 insertions(+), 5 deletions(-)
 
---- a/drivers/pci/host/pcie-qcom.c
-+++ b/drivers/pci/host/pcie-qcom.c
-@@ -60,6 +60,7 @@ struct qcom_pcie_resources_v0 {
+diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+index 9548b05..3e4148e 100644
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -98,6 +98,7 @@ struct qcom_pcie_resources_2_1_0 {
  	struct reset_control *ahb_reset;
  	struct reset_control *por_reset;
  	struct reset_control *phy_reset;
@@ -19,18 +21,23 @@ Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
  	struct regulator *vdda;
  	struct regulator *vdda_phy;
  	struct regulator *vdda_refclk;
-@@ -190,6 +191,10 @@ static int qcom_pcie_get_resources_v0(st
- 	if (IS_ERR(res->phy_reset))
- 		return PTR_ERR(res->phy_reset);
+@@ -276,7 +277,14 @@ static int qcom_pcie_get_resources_2_1_0(struct qcom_pcie *pcie)
+ 		return PTR_ERR(res->por_reset);
  
-+	res->ext_reset = devm_reset_control_get(dev, "ext");
+ 	res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
+-	return PTR_ERR_OR_ZERO(res->phy_reset);
++	if (IS_ERR(res->phy_reset))
++		return PTR_ERR(res->phy_reset);
++
++	res->ext_reset = devm_reset_control_get_exclusive(dev, "ext");
 +	if (IS_ERR(res->ext_reset))
 +		return PTR_ERR(res->ext_reset);
 +
- 	return 0;
++	return 0;
  }
  
-@@ -234,6 +239,7 @@ static void qcom_pcie_deinit_v0(struct q
+ static void qcom_pcie_deinit_2_1_0(struct qcom_pcie *pcie)
+@@ -288,6 +296,7 @@ static void qcom_pcie_deinit_2_1_0(struct qcom_pcie *pcie)
  	reset_control_assert(res->ahb_reset);
  	reset_control_assert(res->por_reset);
  	reset_control_assert(res->pci_reset);
@@ -38,7 +45,7 @@ Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
  	clk_disable_unprepare(res->iface_clk);
  	clk_disable_unprepare(res->core_clk);
  	clk_disable_unprepare(res->phy_clk);
-@@ -251,6 +257,12 @@ static int qcom_pcie_init_v0(struct qcom
+@@ -306,6 +315,12 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
  	u32 val;
  	int ret;
  
@@ -51,17 +58,17 @@ Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
  	ret = regulator_enable(res->vdda);
  	if (ret) {
  		dev_err(dev, "cannot enable vdda regulator\n");
-@@ -269,16 +281,16 @@ static int qcom_pcie_init_v0(struct qcom
+@@ -324,16 +339,16 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
  		goto err_vdda_phy;
  	}
  
 -	ret = reset_control_assert(res->ahb_reset);
-+	ret = reset_control_deassert(res->ext_reset);
++	ret = reset_control_assert(res->ext_reset);
  	if (ret) {
 -		dev_err(dev, "cannot assert ahb reset\n");
 -		goto err_assert_ahb;
 +		dev_err(dev, "cannot assert ext reset\n");
-+		goto err_reset_ext;
++		goto err_assert_ext;
  	}
  
  	ret = clk_prepare_enable(res->iface_clk);
@@ -72,7 +79,7 @@ Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
  	}
  
  	ret = clk_prepare_enable(res->core_clk);
-@@ -360,7 +372,9 @@ err_clk_phy:
+@@ -422,7 +437,9 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
  	clk_disable_unprepare(res->core_clk);
  err_clk_core:
  	clk_disable_unprepare(res->iface_clk);

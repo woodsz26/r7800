@@ -6,50 +6,53 @@ Subject: PCI: qcom: Force GEN1 support
 Change-Id: Ica54ddb737d7b851469deab1745f54bf431bd3f0
 Signed-off-by: Sham Muthayyan <smuthayy@codeaurora.org>
 ---
- drivers/pci/host/pcie-qcom.c | 13 +++++++++++++
+ drivers/pci/dwc/pcie-qcom.c | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
---- a/drivers/pci/host/pcie-qcom.c
-+++ b/drivers/pci/host/pcie-qcom.c
-@@ -90,6 +90,8 @@
- #define PCIE20_PARF_CONFIG_BITS			0x50
- #define PHY_RX0_EQ(x)				(x << 24)
+diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+index 487aa34..5baa48f 100644
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -85,6 +85,8 @@
+ 
+ #define PCIE20_CAP_LINKCTRLSTATUS		(PCIE20_CAP + 0x10)
  
 +#define PCIE20_LNK_CONTROL2_LINK_STATUS2        0xA0
 +
- struct qcom_pcie_resources_v0 {
- 	struct clk *iface_clk;
- 	struct clk *core_clk;
-@@ -138,6 +140,7 @@ struct qcom_pcie {
+ #define PCIE20_AXI_MSTR_RESP_COMP_CTRL0		0x818
+ #define PCIE20_AXI_MSTR_RESP_COMP_CTRL1		0x81c
+ 
+@@ -219,6 +221,7 @@ struct qcom_pcie {
  	struct phy *phy;
  	struct gpio_desc *reset;
  	struct qcom_pcie_ops *ops;
 +	uint32_t force_gen1;
  };
  
- #define to_qcom_pcie(x)		container_of(x, struct qcom_pcie, pp)
-@@ -477,6 +480,11 @@ static int qcom_pcie_init_v0(struct qcom
+ #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
+@@ -548,6 +551,12 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
+ 	writel(CFG_BRIDGE_SB_INIT,
+ 	       pci->dbi_base + PCIE20_AXI_MSTR_RESP_COMP_CTRL1);
  
- 	/* wait for clock acquisition */
- 	usleep_range(1000, 1500);
 +	if (pcie->force_gen1) {
 +		writel_relaxed((readl_relaxed(
-+			pcie->pp.dbi_base + PCIE20_LNK_CONTROL2_LINK_STATUS2) | 1),
-+			pcie->pp.dbi_base + PCIE20_LNK_CONTROL2_LINK_STATUS2);
++			pci->dbi_base + PCIE20_LNK_CONTROL2_LINK_STATUS2) | 1),
++			pci->dbi_base + PCIE20_LNK_CONTROL2_LINK_STATUS2);
 +	}
- 
++
  	qcom_pcie_prog_viewport_cfg0(pcie, MSM_PCIE_DEV_CFG_ADDR);
  	qcom_pcie_prog_viewport_mem2_outbound(pcie);
-@@ -666,6 +674,8 @@ static int qcom_pcie_probe(struct platfo
+ 
+@@ -1390,6 +1399,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 	struct dw_pcie *pci;
  	struct qcom_pcie *pcie;
- 	struct pcie_port *pp;
  	int ret;
 +	uint32_t force_gen1 = 0;
 +	struct device_node *np = pdev->dev.of_node;
  
  	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
  	if (!pcie)
-@@ -678,6 +688,9 @@ static int qcom_pcie_probe(struct platfo
+@@ -1411,6 +1422,9 @@ static int qcom_pcie_probe(struct platform_device *pdev)
  	if (IS_ERR(pcie->reset))
  		return PTR_ERR(pcie->reset);
  

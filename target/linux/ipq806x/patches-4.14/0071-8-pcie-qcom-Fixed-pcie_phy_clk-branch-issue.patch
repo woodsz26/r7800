@@ -33,11 +33,11 @@ disables pcie_phy_clk.
 Change-Id: Ib29c154d10eb64363d9cc982ce5fd8107af5627d
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/pci/host/pcie-qcom.c | 16 +++++++---------
+ drivers/pci/dwc/pcie-qcom.c | 16 +++++++---------
  1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/drivers/pci/host/pcie-qcom.c
-+++ b/drivers/pci/host/pcie-qcom.c
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
 @@ -352,6 +352,7 @@ static void qcom_pcie_deinit_v0(struct q
  {
  	struct qcom_pcie_resources_v0 *res = &pcie->res.v0;

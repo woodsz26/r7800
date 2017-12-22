@@ -474,7 +474,7 @@
 
 	firmware {
 		scm {
-			compatible = "qcom,scm-ipq806x";
+			compatible = "qcom,scm-apq806x";
 		};
 	};
 

@@ -5,8 +5,8 @@
 	compatible = "qcom,ipq8065", "qcom,ipq8064";
 
 	cpus {
-		qcom,l2 {
-			qcom,l2-cpufreq = <384000000 600000000 1725000000>;
+		L2: l2-cache {
+			l2-cpufreq = <384000000 600000000 1725000000>;
 		};
 	};
 

@@ -203,10 +203,10 @@ index 9c0a4b5..9650ad3 100644
  	struct clk		*clk;
  	struct clk		*l2_clk; /* L2 clock */
  	unsigned int		l2_rate[3]; /* L2 bus clock rate thresholds */
-+	bool				l2_rate_defined
++	bool				l2_rate_defined;
 +	unsigned int		l2_cpufreq[3]; /* L2 target CPU frequency */
 +	unsigned int		l2_volt[3]; /* L2 voltage array */
-+	bool				l2_volt_defined
++	bool				l2_volt_defined;
  	struct cpufreq_cpuinfo	cpuinfo;/* see above */
  
  	unsigned int		min;    /* in kHz */

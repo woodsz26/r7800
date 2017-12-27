@@ -465,6 +465,24 @@
 			clock-frequency = <25000000>;
 		};
 
+		nss_fabric_0_active {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <533000000>;
+
+			assigned-clocks = <&rpmcc RPM_NSS_FABRIC_0_A_CLK>;
+			assigned-clock-rates = <533000000>;
+		};
+		
+		nss_fabric_1_active {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <266500000>;
+
+			assigned-clocks = <&rpmcc RPM_NSS_FABRIC_1_A_CLK>;
+			assigned-clock-rates = <266500000>;
+		};
+
 		sleep_clk: sleep_clk {
 			compatible = "fixed-clock";
 			clock-frequency = <32768>;
@@ -574,9 +592,6 @@
 			rpmcc: clock-controller {
 				compatible	= "qcom,rpmcc-ipq806x", "qcom,rpmcc";
 				#clock-cells = <1>;
-				
-				assigned-clocks = <&rpmcc RPM_NSS_FABRIC_0_A_CLK>, <&rpmcc RPM_NSS_FABRIC_1_A_CLK>;
-				assigned-clock-rates = <533000000>, <266500000>;
 			};
 
 			regulators {

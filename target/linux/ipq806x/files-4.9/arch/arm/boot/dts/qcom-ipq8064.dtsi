@@ -27,8 +27,8 @@
 			next-level-cache = <&L2>;
 			qcom,acc = <&acc0>;
 			qcom,saw = <&saw0>;
-			clocks = <&kraitcc 0>, <&kraitcc 4>;
-			clock-names = "cpu", "l2";
+			clocks = <&kraitcc 0>;
+			clock-names = "cpu";
 			clock-latency = <100000>;
 			cpu-supply = <&smb208_s2a>;
 			voltage-tolerance = <5>;
@@ -46,8 +46,8 @@
 			next-level-cache = <&L2>;
 			qcom,acc = <&acc1>;
 			qcom,saw = <&saw1>;
-			clocks = <&kraitcc 1>, <&kraitcc 4>;
-			clock-names = "cpu", "l2";
+			clocks = <&kraitcc 1>;
+			clock-names = "cpu";
 			clock-latency = <100000>;
 			cpu-supply = <&smb208_s2b>;
 			cooling-min-state = <0>;
@@ -60,6 +60,8 @@
 			compatible = "cache";
 			cache-level = <2>;
 			qcom,saw = <&saw_l2>;
+			clocks = <&kraitcc 4>;
+			clock-names = "cache";
 			l2-rates = <384000000 1000000000 1200000000>;
 			l2-cpufreq = <384000000 600000000 1200000000>;
 			l2-volt = <1100000 1100000 1150000>;

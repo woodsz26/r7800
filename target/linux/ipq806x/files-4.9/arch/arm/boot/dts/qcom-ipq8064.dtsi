@@ -471,6 +471,7 @@
 			clock-frequency = <533000000>;
 
 			assigned-clocks = <&rpmcc RPM_NSS_FABRIC_0_A_CLK>;
+			assigned-clock-parents = <&rpmcc RPM_NSS_FABRIC_0_A_CLK>;
 			assigned-clock-rates = <533000000>;
 		};
 		
@@ -480,6 +481,7 @@
 			clock-frequency = <266500000>;
 
 			assigned-clocks = <&rpmcc RPM_NSS_FABRIC_1_A_CLK>;
+			assigned-clock-parents = <&rpmcc RPM_NSS_FABRIC_0_A_CLK>;
 			assigned-clock-rates = <266500000>;
 		};
 

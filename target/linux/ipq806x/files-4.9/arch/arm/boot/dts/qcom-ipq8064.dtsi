@@ -574,6 +574,9 @@
 			rpmcc: clock-controller {
 				compatible	= "qcom,rpmcc-ipq806x", "qcom,rpmcc";
 				#clock-cells = <1>;
+				
+				assigned-clocks = <&rpmcc RPM_NSS_FABRIC_0_A_CLK>, <&rpmcc RPM_NSS_FABRIC_1_A_CLK>;
+				assigned-clock-rates = <533000000>, <266500000>;
 			};
 
 			regulators {

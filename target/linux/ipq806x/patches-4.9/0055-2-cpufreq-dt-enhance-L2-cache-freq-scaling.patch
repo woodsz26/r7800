@@ -1,6 +1,6 @@
-From 3e977642c59ae411137899a8d5c87068f13b7e93 Mon Sep 17 00:00:00 2001
+From 69475944c1fa4e0bcc74eeb9967d7dbd0e061a0f Mon Sep 17 00:00:00 2001
 From: Pavel Kubelun <be.dissent@gmail.com>
-Date: Wed, 27 Dec 2017 14:48:15 +0300
+Date: Thu, 28 Dec 2017 10:50:45 +0300
 Subject: [PATCH] cpufreq-dt: enhance L2 cache freq scaling
 
 Allow to set target cpu frequency to take decision on scaling l2 cache
@@ -8,12 +8,12 @@ up or down and corresponding voltages to be supplied per frequency.
 
 Signed-off-by: Pavel Kubelun <be.dissent@gmail.com>
 ---
- drivers/cpufreq/cpufreq-dt.c | 116 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
+ drivers/cpufreq/cpufreq-dt.c | 119 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------------------------
  include/linux/cpufreq.h      |   4 ++++
- 2 files changed, 98 insertions(+), 22 deletions(-)
+ 2 files changed, 99 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index ac5d348..43580ca 100644
+index ac5d348..ce1b84a 100644
 --- a/drivers/cpufreq/cpufreq-dt.c
 +++ b/drivers/cpufreq/cpufreq-dt.c
 @@ -37,6 +37,9 @@ struct private_data {
@@ -91,15 +91,18 @@ index ac5d348..43580ca 100644
  			}
  		}
  
-@@ -231,6 +249,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+@@ -229,8 +247,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	const char *name;
+ 	int ret;
  	struct srcu_notifier_head *opp_srcu_head;
- 	struct device_node *l2_np;
- 	struct clk *l2_clk = NULL;
+-	struct device_node *l2_np;
+-	struct clk *l2_clk = NULL;
++	struct clk *l2_clk;
 +	struct device_node *np, *cache;
  
  	cpu_dev = get_cpu_device(policy->cpu);
  	if (!cpu_dev) {
-@@ -355,12 +374,61 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+@@ -355,12 +373,61 @@ static int cpufreq_init(struct cpufreq_policy *policy)
  		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
  	rcu_read_unlock();
  
@@ -118,31 +121,31 @@ index ac5d348..43580ca 100644
 +		policy->l2_rate_defined = false;
 +		policy->l2_volt_defined = false;
 +
-+		l2_clk = clk_get(cache, NULL);
-+		if (!IS_ERR(l2_clk))
++		l2_clk = of_clk_get(cache, NULL);
++		if (!IS_ERR(l2_clk)) {
 +			policy->l2_clk = l2_clk;
 +			of_property_read_u32_array(cache, "l2-rates", policy->l2_rate, 3);
-+		else
++		} else
 +			pr_warn("L2 cache: clock not found \n");
 +
 +		if (policy->l2_rate[0] && policy->l2_rate[1] && policy->l2_rate[2]) 
 +			policy->l2_rate_defined = true;
-+			else
-+				pr_warn("L2 cache: failed to parse rates from the DT \n");
++		else
++			pr_warn("L2 cache: failed to parse rates from the DT \n");
 +
 +		if (policy->l2_rate_defined) {
 +			of_property_read_u32_array(cache, "l2-cpufreq", policy->l2_cpufreq, 3);
 +			if (!policy->l2_cpufreq[0] || !policy->l2_cpufreq[1] ||
 +				!policy->l2_cpufreq[2]) {
 +				pr_warn("L2 cache: failed to parse target cpu frequency from the DT \n");
-+				policy->l2_cpufreq = policy->l2_rate;
++				memcpy(policy->l2_cpufreq, policy->l2_rate, sizeof(policy->l2_rate));
 +			}
 +
 +			of_property_read_u32_array(cache, "l2-volt", policy->l2_volt, 3);
 +			if (policy->l2_volt[0] && policy->l2_volt[1] && policy->l2_volt[2])
 +				policy->l2_volt_defined = true;
-+				else
-+					pr_warn("L2 cache: failed to parse voltage from the DT \n");
++			else
++				pr_warn("L2 cache: failed to parse voltage from the DT \n");
 +
 +			if (policy->l2_volt_defined) {
 +				
@@ -167,7 +170,7 @@ index ac5d348..43580ca 100644
  
  	ret = cpufreq_table_validate_and_show(policy, freq_table);
  	if (ret) {
-@@ -393,10 +461,12 @@ out_unregister_nb:
+@@ -393,10 +460,12 @@ out_unregister_nb:
  out_free_priv:
  	kfree(priv);
  out_free_opp:
@@ -180,7 +183,7 @@ index ac5d348..43580ca 100644
  	clk_put(cpu_clk);
  
  	return ret;
-@@ -408,10 +478,12 @@ static int cpufreq_exit(struct cpufreq_policy *policy)
+@@ -408,10 +477,12 @@ static int cpufreq_exit(struct cpufreq_policy *policy)
  
  	cpufreq_cooling_unregister(priv->cdev);
  	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);

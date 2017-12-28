@@ -35,7 +35,7 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
  };
  
  static struct freq_attr *cpufreq_dt_attr[] = {
-@@ -43,9 +46,16 @@ static struct freq_attr *cpufreq_dt_attr
+@@ -48,6 +48,12 @@ static struct freq_attr *cpufreq_dt_attr[] = {
  static int set_target(struct cpufreq_policy *policy, unsigned int index)
  {
  	struct private_data *priv = policy->driver_data;
@@ -44,12 +44,21 @@ Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 +
 +	mutex_lock(&priv->lock);
 +	ret = dev_pm_opp_set_rate(priv->cpu_dev, target_freq);
-+	if (!ret)
-+		priv->opp_freq = target_freq;
-+	mutex_unlock(&priv->lock);
++	if (!ret) {
+ 
+ #ifdef CONFIG_CPUFREQ_DT_L2_CACHE
+ 	unsigned long target_freq = policy->freq_table[index].frequency * 1000;
+@@ -95,8 +101,12 @@ static int set_target(struct cpufreq_policy *policy, unsigned int index)
+ 	}
+ #endif /* CONFIG_CPUFREQ_DT_L2_CACHE */
  
 -	return dev_pm_opp_set_rate(priv->cpu_dev,
 -				   policy->freq_table[index].frequency * 1000);
++		priv->opp_freq = target_freq;
++	}
++
++	mutex_unlock(&priv->lock);
++ 
 +	return ret;
  }
  

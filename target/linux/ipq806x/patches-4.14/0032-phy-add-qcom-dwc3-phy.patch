@@ -41,7 +41,7 @@ Signed-off-by: Andy Gross <agross@codeaurora.org>
  obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
  obj-$(CONFIG_PHY_QCOM_QUSB2)		+= phy-qcom-qusb2.o
 --- /dev/null
-+++ b/drivers/phy/phy-qcom-dwc3.c
++++ b/drivers/phy/qualcomm/phy-qcom-dwc3.c
 @@ -0,0 +1,575 @@
 +/* Copyright (c) 2014-2015, Code Aurora Forum. All rights reserved.
 + *

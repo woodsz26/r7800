@@ -19,6 +19,5 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  KBUILD_CFLAGS_MODULE  := -DMODULE
 -KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
 +KBUILD_LDFLAGS_MODULE = -T $(srctree)/scripts/module-common.lds $(if $(CONFIG_PROFILING),,-s)
- 
+ GCC_PLUGINS_CFLAGS :=
  # Read KERNELRELEASE from include/config/kernel.release (if it exists)
- KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)

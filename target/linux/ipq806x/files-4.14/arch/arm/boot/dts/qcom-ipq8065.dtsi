@@ -4,6 +4,13 @@
 	model = "Qualcomm IPQ8065";
 	compatible = "qcom,ipq8065", "qcom,ipq8064";
 
+	cpus {
+		qcom,l2 {
+			qcom,l2-cpufreq = <384000000 600000000 1725000000>;
+		};
+	};
+
+
 	qcom,pvs {
 		qcom,pvs-format-a;
 		qcom,speed0-pvs0-bin-v0 =

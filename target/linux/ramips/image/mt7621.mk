@@ -105,6 +105,26 @@ define Device/k2p
 endef
 TARGET_DEVICES += k2p
 
+define Device/mir3g
+  DTS := MIR3G
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 4096k
+  KERNEL := $(KERNEL_DTB) | uImage lzma
+  IMAGE_SIZE := 32768k
+  UBINIZE_OPTS := -E 5
+  IMAGES := sysupgrade.tar kernel1.bin rootfs0.bin
+  IMAGE/kernel1.bin := append-kernel
+  IMAGE/rootfs0.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  DEVICE_TITLE := Xiaomi Mi Router 3G
+  SUPPORTED_DEVICES += R3G
+  DEVICE_PACKAGES := \
+	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport wpad-mini \
+	uboot-envtools
+endef
+TARGET_DEVICES += mir3g
+
 define Device/mt7621
   DTS := MT7621
   BLOCKSIZE := 64k
@@ -121,6 +141,15 @@ define Device/newifi-d1
 	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport wpad-mini
 endef
 TARGET_DEVICES += newifi-d1
+
+define Device/d-team_newifi-d2
+  DTS := Newifi-D2
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  DEVICE_TITLE := Newifi D2
+  DEVICE_PACKAGES := \
+	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += d-team_newifi-d2
 
 define Device/pbr-m1
   DTS := PBR-M1
@@ -204,6 +233,14 @@ define Device/timecloud
   DEVICE_PACKAGES := kmod-usb3
 endef
 TARGET_DEVICES += timecloud
+
+define Device/u7621-06-256M-16M
+  DTS := U7621-06-256M-16M
+  IMAGE_SIZE := 16064k
+  DEVICE_TITLE := UniElec U7621-06 (256M RAM/16M flash)
+  DEVICE_PACKAGES := kmod-ata-core kmod-ata-ahci kmod-sdhci-mt7620 kmod-usb3
+endef
+TARGET_DEVICES += u7621-06-256M-16M
 
 define Device/ubnt-erx
   DTS := UBNT-ERX
@@ -300,6 +337,16 @@ define Device/zbt-we1326
 	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-sdhci-mt7620 wpad-mini
 endef
 TARGET_DEVICES += zbt-we1326
+
+define Device/zbtlink_zbt-we3526
+  DTS := ZBT-WE3526
+  IMAGE_SIZE := $(ralink_default_fw_size_16M)
+  DEVICE_TITLE := ZBT WE3526
+  DEVICE_PACKAGES := \
+	kmod-sdhci-mt7620 kmod-mt7603 kmod-mt76x2 \
+	kmod-usb3 kmod-usb-ledtrig-usbport wpad-mini
+endef
+TARGET_DEVICES += zbtlink_zbt-we3526
 
 define Device/zbt-wg2626
   DTS := ZBT-WG2626

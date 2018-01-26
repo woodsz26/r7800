@@ -19,6 +19,7 @@ enum ath79_mach_type {
 	ATH79_MACH_GENERIC = 0,
 	ATH79_MACH_A40,				/* OpenMesh A40 */
 	ATH79_MACH_A60,				/* OpenMesh A60 */
+	ATH79_MACH_WI2A_AC200I,			/* Nokia WI2A-AC200i */
 	ATH79_MACH_ALFA_AP120C,			/* ALFA Network AP120C board */
 	ATH79_MACH_ALFA_AP96,			/* ALFA Network AP96 board */
 	ATH79_MACH_ALFA_NX,			/* ALFA Network N2/N5 board */
@@ -40,6 +41,7 @@ enum ath79_mach_type {
 	ATH79_MACH_AP152,			/* Atheros AP152 reference board */
 	ATH79_MACH_AP531B0,			/* Rockeetech AP531B0 */
 	ATH79_MACH_AP90Q,			/* YunCore AP90Q */
+	ATH79_MACH_AP91_5G,			/* ALFA Network AP91-5G */
 	ATH79_MACH_AP96,			/* Atheros AP96 */
 	ATH79_MACH_ARCHER_C25_V1,		/* TP-LINK Archer C25 V1 board */
 	ATH79_MACH_ARCHER_C5,			/* TP-LINK Archer C5 board */
@@ -48,6 +50,7 @@ enum ath79_mach_type {
 	ATH79_MACH_ARCHER_C60_V1,		/* TP-LINK Archer C60 V1 board */
 	ATH79_MACH_ARCHER_C7,			/* TP-LINK Archer C7 board */
 	ATH79_MACH_ARCHER_C7_V2,		/* TP-LINK Archer C7 V2 board */
+	ATH79_MACH_ARCHER_C7_V4,		/* TP-LINK Archer C7 V4 board */
 	ATH79_MACH_ARDUINO_YUN,			/* Yun */
 	ATH79_MACH_AW_NR580,			/* AzureWave AW-NR580 */
 	ATH79_MACH_BHR_4GRV2,			/* Buffalo BHR-4GRV2 */
@@ -60,6 +63,7 @@ enum ath79_mach_type {
 	ATH79_MACH_CARAMBOLA2,			/* 8devices Carambola2 */
 	ATH79_MACH_CF_E316N_V2,			/* COMFAST CF-E316N v2 */
 	ATH79_MACH_CF_E320N_V2,			/* COMFAST CF-E320N v2 */
+	ATH79_MACH_CF_E355AC,			/* COMFAST CF-E355AC */
 	ATH79_MACH_CF_E380AC_V1,		/* COMFAST CF-E380AC v1 */
 	ATH79_MACH_CF_E380AC_V2,		/* COMFAST CF-E380AC v2 */
 	ATH79_MACH_CF_E520N,			/* COMFAST CF-E520N */
@@ -89,6 +93,7 @@ enum ath79_mach_type {
 	ATH79_MACH_DLAN_PRO_1200_AC,		/* devolo dLAN pro 1200+ WiFi ac*/
 	ATH79_MACH_DLAN_PRO_500_WP,		/* devolo dLAN pro 500 Wireless+ */
 	ATH79_MACH_DOMYWIFI_DW33D,		/* DomyWifi DW33D */
+	ATH79_MACH_DR342,			/* Wallys DR342 */
 	ATH79_MACH_DR344,			/* Wallys DR344 */
 	ATH79_MACH_DR531,			/* Wallys DR531 */
 	ATH79_MACH_DRAGINO2,			/* Dragino Version 2 */
@@ -102,6 +107,7 @@ enum ath79_mach_type {
 	ATH79_MACH_EPG5000,			/* EnGenius EPG5000 */
 	ATH79_MACH_ESR1750,			/* EnGenius ESR1750 */
 	ATH79_MACH_ESR900,			/* EnGenius ESR900 */
+	ATH79_MACH_EW_BALIN,			/* embedded wireless Balin Platform */
 	ATH79_MACH_EW_DORIN,			/* embedded wireless Dorin Platform */
 	ATH79_MACH_EW_DORIN_ROUTER,		/* embedded wireless Dorin Router Platform */
 	ATH79_MACH_F9K1115V2,			/* Belkin AC1750DB */
@@ -109,9 +115,11 @@ enum ath79_mach_type {
 	ATH79_MACH_GL_AR150,			/* GL-AR150 support */
 	ATH79_MACH_GL_AR300,			/* GL-AR300 */
 	ATH79_MACH_GL_AR300M,			/* GL-AR300M */
+	ATH79_MACH_GL_AR750,			/* GL.iNet GL-AR750 */
 	ATH79_MACH_GL_DOMINO,			/* Domino */
 	ATH79_MACH_GL_INET,			/* GL-CONNECT GL-INET */
 	ATH79_MACH_GL_MIFI,			/* GL-MIFI support */
+	ATH79_MACH_GL_USB150,			/* GL.iNet GL-USB150 */
 	ATH79_MACH_GS_MINIBOX_V1,		/* Gainstrong MiniBox V1.0 */
 	ATH79_MACH_GS_OOLITE,			/* GS OOLITE V1.0 */
 	ATH79_MACH_HIVEAP_121,			/* Aerohive HiveAP-121*/
@@ -137,6 +145,7 @@ enum ath79_mach_type {
 	ATH79_MACH_MYNET_REXT,			/* WD My Net Wi-Fi Range Extender */
 	ATH79_MACH_MZK_W04NU,			/* Planex MZK-W04NU */
 	ATH79_MACH_MZK_W300NH,			/* Planex MZK-W300NH */
+	ATH79_MACH_N5Q,				/* ALFA Network N5Q */
 	ATH79_MACH_NBG460N,			/* Zyxel NBG460N/550N/550NH */
 	ATH79_MACH_NBG6616,			/* Zyxel NBG6616 */
 	ATH79_MACH_NBG6716,			/* Zyxel NBG6716 */
@@ -159,6 +168,7 @@ enum ath79_mach_type {
 	ATH79_MACH_PB44,			/* Atheros PB44 reference board */
 	ATH79_MACH_PQI_AIR_PEN,			/* PQI Air Pen */
 	ATH79_MACH_QIHOO_C301,			/* Qihoo 360 C301 */
+	ATH79_MACH_R36A,			/* ALFA Network R36A */
 	ATH79_MACH_R602N,			/* P&W R602N */
 	ATH79_MACH_R6100,			/* NETGEAR R6100 */
 	ATH79_MACH_RAMBUTAN,			/* 8devices Rambutan */
@@ -181,6 +191,7 @@ enum ath79_mach_type {
 	ATH79_MACH_RB_750UPR2,			/* MikroTik RouterBOARD 750UP r2 */
 	ATH79_MACH_RB_751,			/* MikroTik RouterBOARD 751 */
 	ATH79_MACH_RB_751G,			/* Mikrotik RouterBOARD 751G */
+	ATH79_MACH_RB_911L,			/* Mikrotik RouterBOARD 911-2Hn/911-5Hn boards */
 	ATH79_MACH_RB_922GS,			/* Mikrotik RouterBOARD 911/922GS boards */
 	ATH79_MACH_RB_941,			/* MikroTik RouterBOARD 941-2nD */
 	ATH79_MACH_RB_951G,			/* Mikrotik RouterBOARD 951G */
@@ -192,9 +203,11 @@ enum ath79_mach_type {
 	ATH79_MACH_RB_MAP,			/* Mikrotik RouterBOARD mAP2nD */
 	ATH79_MACH_RB_MAPL,			/* Mikrotik RouterBOARD mAP L-2nD */
 	ATH79_MACH_RB_WAP,			/* Mikrotik RouterBOARD wAP2nD */
+	ATH79_MACH_RB_WAPAC,			/* Mikrotik RouterBOARD wAPG-5HacT2HnD */
 	ATH79_MACH_RB_SXTLITE2ND,		/* Mikrotik RouterBOARD SXT Lite 2nD */
 	ATH79_MACH_RB_SXTLITE5ND,		/* Mikrotik RouterBOARD SXT Lite 5nD */
 	ATH79_MACH_RE450,			/* TP-LINK RE450 */
+	ATH79_MACH_RUT9XX,			/* Teltonika RUT900 series */
 	ATH79_MACH_RW2458N,			/* Redwave RW2458N */
 	ATH79_MACH_SC1750,			/* Abicom SC1750 */
 	ATH79_MACH_SC300M,			/* Abicom SC300M */
@@ -234,6 +247,7 @@ enum ath79_mach_type {
 	ATH79_MACH_TL_WA901ND_V2,		/* TP-LINK TL-WA901ND v2 */
 	ATH79_MACH_TL_WA901ND_V3,		/* TP-LINK TL-WA901ND v3 */
 	ATH79_MACH_TL_WA901ND_V4,		/* TP-LINK TL-WA901ND v4 */
+	ATH79_MACH_TL_WA901ND_V5,		/* TP-LINK TL-WA901ND v5 */
 	ATH79_MACH_TL_WDR3320_V2,		/* TP-LINK TL-WDR3320 v2 */
 	ATH79_MACH_TL_WDR3500,			/* TP-LINK TL-WDR3500 */
 	ATH79_MACH_TL_WDR4300,			/* TP-LINK TL-WDR4300 */
@@ -241,6 +255,7 @@ enum ath79_mach_type {
 	ATH79_MACH_TL_WDR6500_V2,		/* TP-LINK TL-WDR6500 v2 */
 	ATH79_MACH_TL_WPA8630,			/* TP-Link TL-WPA8630 */
 	ATH79_MACH_TL_WR1041N_V2,		/* TP-LINK TL-WR1041N v2 */
+	ATH79_MACH_TL_WR1043N_V5,		/* TP-LINK TL-WR1043N v5 */
 	ATH79_MACH_TL_WR1043ND,			/* TP-LINK TL-WR1043ND */
 	ATH79_MACH_TL_WR1043ND_V2,		/* TP-LINK TL-WR1043ND v2 */
 	ATH79_MACH_TL_WR1043ND_V4,		/* TP-LINK TL-WR1043ND v4 */
@@ -254,6 +269,7 @@ enum ath79_mach_type {
 	ATH79_MACH_TL_WR802N_V1,		/* TP-LINK TL-WR802N v1 */
 	ATH79_MACH_TL_WR802N_V2,		/* TP-LINK TL-WR802N v2 */
 	ATH79_MACH_TL_WR810N,			/* TP-LINK TL-WR810N */
+	ATH79_MACH_TL_WR810N_V2,		/* TP-LINK TL-WR810N v2 */
 	ATH79_MACH_TL_WR840N_V2,		/* TP-LINK TL-WR840N v2 */
 	ATH79_MACH_TL_WR840N_V3,		/* TP-LINK TL-WR840N v3 */
 	ATH79_MACH_TL_WR841N_V1,		/* TP-LINK TL-WR841N v1 */

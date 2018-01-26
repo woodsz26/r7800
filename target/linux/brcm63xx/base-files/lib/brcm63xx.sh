@@ -87,6 +87,9 @@ brcm63xx_dt_detect() {
 	"BT Voyager V2500V")
 		board_name="v2500v_bb"
 		;;
+	"Comtrend AR-5315u")
+		board_name="ar-5315u"
+		;;
 	"Comtrend AR-5381u")
 		board_name="ar-5381u"
 		;;
@@ -224,6 +227,9 @@ brcm63xx_dt_detect() {
 		;;
 	"Sagem F@ST2704V2")
 		board_name="fast2704v2"
+		;;
+	"Sercomm AD1018 (SPI flash mod)")
+		board_name="ad1018-nor"
 		;;
 	"SFR Neuf Box 4"*)
 		board_name="neufbox4"

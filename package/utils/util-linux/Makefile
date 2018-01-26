@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2015 OpenWrt.org
+# Copyright (C) 2007-2018 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,12 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=util-linux
-PKG_VERSION:=2.29.2
-PKG_RELEASE:=1
+PKG_VERSION:=2.30.2
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=@KERNEL/linux/utils/$(PKG_NAME)/v2.29
-PKG_HASH:=accea4d678209f97f634f40a93b7e9fcad5915d1f4749f6c47bee6bf110fe8e3
+PKG_SOURCE_URL:=@KERNEL/linux/utils/$(PKG_NAME)/v2.30
+PKG_HASH:=7b5be5489e9b5b7177832836467aba1c87bf0e9bcbcb5a6f35d76cd4782589dc
+PKG_CPE_ID:=cpe:/a:kernel:util-linux
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=	COPYING					\
@@ -29,6 +30,8 @@ PKG_BUILD_PARALLEL:=1
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
+
+DISABLE_NLS:=--disable-nls
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -163,6 +166,7 @@ endef
 define Package/dmesg
 $(call Package/util-linux/Default)
   TITLE:=print or control the kernel ring buffer
+  DEPENDS:= +libncursesw
 endef
 
 define Package/dmesg/description
@@ -172,7 +176,7 @@ endef
 define Package/fdisk
 $(call Package/util-linux/Default)
   TITLE:=manipulate disk partition table
-  DEPENDS:= +libblkid +libsmartcols +libfdisk
+  DEPENDS:= +libblkid +libsmartcols +libfdisk +libncursesw
   SUBMENU=Disc
 endef
 
@@ -199,6 +203,19 @@ endef
 
 define Package/flock/description
   manages flock locks from within shell scripts or the command line
+endef
+
+define Package/fstrim
+$(call Package/util-linux/Default)
+  TITLE:=discard unused blocks on a mounted filesystem
+  DEPENDS:= +libblkid +libuuid +libsmartcols +libmount
+  SUBMENU=Filesystem
+endef
+
+define Package/fstrim/description
+  fstrim is used on a mounted filesystem to discard (or "trim") blocks
+  which are not in use by the filesystem.  This is useful for solid-
+  state drives (SSDs) and thinly-provisioned storage.
 endef
 
 define Package/getopt
@@ -349,7 +366,7 @@ define Package/sfdisk
 $(call Package/util-linux/Default)
   TITLE:=partition table manipulator for Linux
   SUBMENU=Disc
-  DEPENDS:= +libblkid +libfdisk +libsmartcols
+  DEPENDS:= +libblkid +libfdisk +libsmartcols +libncursesw
 endef
 
 define Package/sfdisk/description
@@ -549,6 +566,11 @@ define Package/flock/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/flock $(1)/usr/bin/
 endef
 
+define Package/fstrim/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/fstrim $(1)/usr/sbin/
+endef
+
 define Package/getopt/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/getopt $(1)/usr/bin/
@@ -674,6 +696,7 @@ $(eval $(call BuildPackage,dmesg))
 $(eval $(call BuildPackage,fdisk))
 $(eval $(call BuildPackage,findfs))
 $(eval $(call BuildPackage,flock))
+$(eval $(call BuildPackage,fstrim))
 $(eval $(call BuildPackage,getopt))
 $(eval $(call BuildPackage,hwclock))
 $(eval $(call BuildPackage,logger))

@@ -446,11 +446,17 @@ ar71xx_board_detect() {
 	*"AP90Q")
 		name="ap90q"
 		;;
+	*"AP91-5G")
+		name="ap91-5g"
+		;;
 	*"Archer C25 v1")
 		name="archer-c25-v1"
 		;;
 	*"Archer C5")
 		name="archer-c5"
+		;;
+	*"Archer C7 v4")
+		name="archer-c7-v4"
 		;;
 	*"Archer C58 v1")
 		name="archer-c58-v1"
@@ -506,6 +512,9 @@ ar71xx_board_detect() {
 		;;
 	*"CF-E320N v2")
 		name="cf-e320n-v2"
+		;;
+	*"CF-E355AC")
+		name="cf-e355ac"
 		;;
 	*"CF-E380AC v1")
 		name="cf-e380ac-v1"
@@ -597,6 +606,9 @@ ar71xx_board_detect() {
 	*"Domino Pi")
 		name="gl-domino"
 		;;
+	*"DR342")
+		name="dr342"
+		;;
 	*"DR344")
 		name="dr344"
 		;;
@@ -631,6 +643,9 @@ ar71xx_board_detect() {
 	*"EL-MINI")
 		name="el-mini"
 		;;
+	*"EmbWir-Balin")
+		name="ew-balin"
+		;;
 	*"EmbWir-Dorin")
 		name="ew-dorin"
 		;;
@@ -661,6 +676,9 @@ ar71xx_board_detect() {
 	*"GL-AR300M")
 		name="gl-ar300m"
 		;;
+	*"GL-AR750")
+		name="gl-ar750"
+		;;
 	*"GL-CONNECT INET v1")
 		name="gl-inet"
 
@@ -671,6 +689,9 @@ ar71xx_board_detect() {
 		;;
 	*"GL-MIFI")
 		name="gl-mifi"
+		;;
+	*"GL-USB150")
+		name="gl-usb150"
 		;;
 	*"HiveAP-121")
 		name="hiveap-121"
@@ -753,6 +774,9 @@ ar71xx_board_detect() {
 	*"MZK-W300NH")
 		name="mzk-w300nh"
 		;;
+	*"N5Q")
+		name="n5q"
+		;;
 	*"Nanostation M")
 		name="nanostation-m"
 		ubnt_xm_board_detect
@@ -828,6 +852,9 @@ ar71xx_board_detect() {
 		;;
 	*"Qihoo 360 C301")
 		name="qihoo-c301"
+		;;
+	*"R36A")
+		name="r36a"
 		;;
 	*"R602N")
 		name="r602n"
@@ -905,6 +932,9 @@ ar71xx_board_detect() {
 	*"RouterBOARD 750GL")
 		name="rb-750gl"
 		;;
+	*"RouterBOARD 750P r2")
+		name="rb-750p-pbr2"
+		;;
 	*"RouterBOARD 750UP r2")
 		name="rb-750up-r2"
 		;;
@@ -913,6 +943,12 @@ ar71xx_board_detect() {
 		;;
 	*"RouterBOARD 751G")
 		name="rb-751g"
+		;;
+	*"RouterBOARD 911-2Hn")
+		name="rb-911-2hn"
+		;;
+	*"RouterBOARD 911-5Hn")
+		name="rb-911-5hn"
 		;;
 	*"RouterBOARD 911G-2HPnD")
 		name="rb-911g-2hpnd"
@@ -928,6 +964,9 @@ ar71xx_board_detect() {
 		;;
 	*"RouterBOARD 912UAG-5HPnD")
 		name="rb-912uag-5hpnd"
+		;;
+	*"RouterBOARD 921GS-5HPacD r2")
+		name="rb-921gs-5hpacd-r2"
 		;;
 	*"RouterBOARD 941-2nD")
 		name="rb-941-2nd"
@@ -950,6 +989,9 @@ ar71xx_board_detect() {
 	*"RouterBOARD LHG 5nD")
 		name="rb-lhg-5nd"
 		;;
+	*"RouterBOARD mAP 2nD")
+		name="rb-map-2nd"
+		;;
 	*"RouterBOARD mAP L-2nD")
 		name="rb-mapl-2nd"
 		;;
@@ -959,11 +1001,20 @@ ar71xx_board_detect() {
 	*"RouterBOARD SXT Lite5")
 		name="rb-sxt5n"
 		;;
+	*"RouterBOARD wAP 2nD r2")
+		name="rb-wap-2nd"
+		;;
+	*"RouterBOARD wAP G-5HacT2HnD")
+		name="rb-wapg-5hact2hnd"
+		;;
 	*"RouterStation")
 		name="routerstation"
 		;;
 	*"RouterStation Pro")
 		name="routerstation-pro"
+		;;
+	*"RUT900")
+		name="rut900"
 		;;
 	*"RW2458N")
 		name="rw2458n"
@@ -1037,7 +1088,7 @@ ar71xx_board_detect() {
 	*"TL-MR3420 v2")
 		name="tl-mr3420-v2"
 		;;
-	*TL-MR6400)
+	*"TL-MR6400")
 		name="tl-mr6400"
 		;;
 	*"TL-WA701ND v2")
@@ -1085,6 +1136,9 @@ ar71xx_board_detect() {
 	*"TL-WA901ND v4")
 		name="tl-wa901nd-v4"
 		;;
+	*"TL-WA901ND v5")
+		name="tl-wa901nd-v5"
+		;;
 	*"TL-WDR3320 v2")
 		name="tl-wdr3320-v2"
 		;;
@@ -1105,6 +1159,9 @@ ar71xx_board_detect() {
 		;;
 	*"TL-WR1041N v2")
 		name="tl-wr1041n-v2"
+		;;
+	*"TL-WR1043N v5")
+		name="tl-wr1043n-v5"
 		;;
 	*"TL-WR1043ND")
 		name="tl-wr1043nd"
@@ -1144,6 +1201,9 @@ ar71xx_board_detect() {
 		;;
 	*"TL-WR810N")
 		name="tl-wr810n"
+		;;
+	*"TL-WR810N v2")
+		name="tl-wr810n-v2"
 		;;
 	*"TL-WR840N v2")
 		name="tl-wr840n-v2"
@@ -1221,6 +1281,9 @@ ar71xx_board_detect() {
 		;;
 	"WeIO"*)
 		name="weio"
+		;;
+	*"WI2A-AC200i")
+		name="wi2a-ac200i"
 		;;
 	*"WHR-G301N")
 		name="whr-g301n"
